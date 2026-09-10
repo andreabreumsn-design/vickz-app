@@ -2,28 +2,28 @@ import React from 'react';
 
 export default function NavigationBar({ activeTab, onNavigate }) {
   const tabs = [
-    { id: 'dash', label: 'Dashboard', icon: '🏠' },
-    { id: 'obra', label: 'Obra', icon: '🏗️' },
-    { id: 'viz', label: 'Vizinhança', icon: '👥' },
-    { id: 'anexo1', label: 'Vistoria', icon: '📸' },
-    { id: 'laudo', label: 'Laudo', icon: '📄' },
+    { id: 'tela06', icon: '📋', label: 'Identificação' },
+    { id: 'tela07a', icon: '📸', label: 'Fotos' },
+    { id: 'tela07b', icon: '🗺️', label: 'Mapa' },
+    { id: 'tela08', icon: '🏘️', label: 'Vizinhos' },
+    { id: 'tela09', icon: '✍️', label: 'Assinatura' }
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#001F5B] rounded-t-2xl border-t border-[#334155] max-w-[430px] mx-auto">
-      <div className="flex justify-around">
+    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#e2e8f0] py-3 px-4">
+      <div className="max-w-[430px] mx-auto flex justify-around">
         {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => onNavigate(tab.id)}
-            className={`flex-1 py-3 px-2 text-center transition-colors ${
+            className={`text-center text-xs transition-all ${
               activeTab === tab.id
-                ? 'text-[#FF6600] border-b-2 border-[#FF6600]'
-                : 'text-[#9BB0C9] border-b-2 border-transparent'
+                ? 'text-[#FF6600] font-bold'
+                : 'text-[#64748b] hover:text-[#FF6600]'
             }`}
+            title={tab.label}
           >
-            <div className="text-xl mb-1">{tab.icon}</div>
-            <p className="text-xs font-bold">{tab.label}</p>
+            {tab.icon} {tab.label}
           </button>
         ))}
       </div>
