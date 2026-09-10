@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VICKZ</title>
+<style>
+:root{--navy:#001F5B;--orange:#FF6600;--red:#E62117;--bg:#F4F6F8;--muted:#5C6770}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Inter,system-ui,sans-serif;background:#0b1220;color:#1a1a1a}
+.phone{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh;position:relative}
+.screen{display:none}.screen.on{display:block}
+.bar{background:var(--navy);color:#fff;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.bar img{height:36px}
+.bar b{color:var(--orange)}
+.hero{position:relative;min-height:250px;background:#071433 center/cover no-repeat;color:#fff;text-align:center;padding:18px 16px 70px;
+background-image:linear-gradient(180deg,#001428cc,#001F5Baa),url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=60')}
+.hero img.logo{height:86px;filter:drop-shadow(0 4px 10px #0008)}
+.hero .help{position:absolute;top:12px;right:14px;font-size:13px}
+.quote{font-size:12px;opacity:.9;margin-top:8px}
+.card{background:#fff;border-radius:22px 22px 0 0;margin-top:-40px;padding:20px 16px 24px;position:relative}
+h1{margin:0 0 6px;color:var(--navy);font-size:24px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+.inp{display:flex;align-items:center;gap:8px;border:1px solid #D8DEE6;border-radius:12px;padding:11px 12px;margin:0 0 10px;background:#fff}
+.inp input,.inp select{border:0;outline:0;flex:1;font:inherit;background:transparent;min-width:0}
+.btn{width:100%;border:0;background:var(--orange);color:#fff;font-weight:800;padding:14px;border-radius:12px;cursor:pointer;font-size:16px}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+.link{color:var(--orange);font-weight:700;cursor:pointer}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0 12px}
+.foot3{display:flex;border-top:1px solid #eee;margin-top:16px}
+.foot3 div{flex:1;text-align:center;padding:12px 4px;font-size:10px;font-weight:800;color:var(--navy)}
+.stepper{display:flex;justify-content:space-between;padding:12px 16px 0;font-size:11px;color:#9aa}
+.stepper .on{color:var(--orange);font-weight:800}
+.pad{padding:12px 16px 90px}
+.banner{background:linear-gradient(90deg,#0b1d3a,#1a3a6b),url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=50') center/cover;color:#fff;padding:16px}
+.banner h2{margin:0;font-size:20px}
+.banner h2 span{color:var(--orange)}
+.box{background:#fff;border-radius:14px;padding:12px;margin:10px 16px;box-shadow:0 1px 4px #0001}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;text-align:center;font-size:11px}
+.kpis b{display:block;font-size:18px}
+.mod{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.n{width:28px;height:28px;border-radius:8px;color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.nav{position:sticky;bottom:0;display:flex;background:var(--navy);border-radius:16px 16px 0 0}
+.nav button{flex:1;background:none;border:0;color:#9BB0C9;padding:12px 2px 14px;font-size:10px;font-weight:800}
+.nav button.on{color:var(--orange)}
+.pill{display:inline-block;background:#E8F6EE;color:#1B8A3E;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge{width:22px;height:22px;border-radius:11px;background:var(--red);color:#fff;display:inline-grid;place-items:center;font-size:12px;font-weight:800}
+.mapbox{height:220px;border-radius:10px;overflow:hidden;background:#ddd}
+.mapbox iframe{width:100%;height:100%;border:0}
+label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin:8px 0 4px}
+.safe{background:#EEF3FF;border-radius:12px;padding:10px;font-size:12px;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<section id="login" class="screen on">
+  <div class="hero">
+    <div class="help">Ajuda</div>
+    <img class="logo" src="vickz_logo.png" alt="VICKZ"/>
+    <div style="font-weight:800;letter-spacing:1px">VICKZ</div>
+    <div style="font-size:11px">VISTORIA CAUTELAR<br><span style="color:var(--orange)">DE VIZINHANÇA</span></div>
+    <p>Segurança técnica<br>para um convívio<br>mais tranquilo.</p>
+    <div class="quote">“Obras passam.<br>Boas relações ficam.”</div>
+  </div>
+  <div class="card">
+    <h1>Acesse sua conta</h1>
+    <p class="sub">Entre para gerenciar suas vistorias, laudos e documentos.</p>
+    <div class="inp">✉ <input placeholder="E-mail"/></div>
+    <div class="inp">🔒 <input type="password" placeholder="Senha"/></div>
+    <div class="row" style="font-size:13px;margin:6px 0 12px">
+      <label class="chk" style="margin:0"><input type="checkbox" checked/> Lembrar de mim</label>
+      <span class="link" style="text-align:right">Esqueceu a senha?</span>
+    </div>
+    <button class="btn" onclick="go('dash')">Entrar →</button>
+    <p style="text-align:center;color:#aaa;margin:14px 0">ou</p>
+    <button class="btn ghost" type="button">G Entrar com Google</button>
+    <p style="text-align:center;margin:14px 0 0">Não tem uma conta? <span class="link" onclick="go('signup')">Cadastre-se</span></p>
+    <div class="foot3">
+      <div>🛡<br>PREVENÇÃO</div>
+      <div>👥<br>BOA VIZINHANÇA</div>
+      <div>📊<br>SEGURANÇA PATRIMONIAL</div>
+    </div>
+  </div>
+</section>
+
+<section id="signup" class="screen">
+  <div class="bar"><span onclick="go('login')">‹ Voltar</span><img src="vickz_logo.png"/><span>Já tem conta? <b onclick="go('login')">Entrar</b></span></div>
+  <div class="stepper"><span class="on">1 Dados Pessoais</span><span>2 Dados Profissionais</span><span>3 Confirmação</span></div>
+  <div class="pad">
+    <h1>Criar conta</h1>
+    <p class="sub">Preencha seus dados para utilizar o VICKZ e realizar suas vistorias cautelares de vizinhança.</p>
+    <div class="inp">👤 <input placeholder="Nome completo *"/></div>
+    <div class="inp">✉ <input placeholder="E-mail *"/></div>
+    <div class="inp">📞 <input placeholder="Telefone / WhatsApp *"/></div>
+    <div class="inp">📅 <input placeholder="Data de nascimento *"/></div>
+    <div class="row">
+      <div class="inp">📍 <input placeholder="Cidade *"/></div>
+      <div class="inp"><select><option>Estado *</option><option>PR</option><option>SP</option><option>SC</option></select></div>
+    </div>
+    <label class="chk"><input type="checkbox"/> Li e concordo com os <span class="link">Termos de Uso</span> e a <span class="link">Política de Privacidade</span>.</label>
+    <button class="btn" onclick="go('signup2')">Avançar →</button>
+    <div class="safe" style="margin-top:14px">🛡 <b>Seus dados estão protegidos.</b><br>O VICKZ adota práticas de segurança e privacidade conforme a legislação vigente.</div>
+  </div>
+</section>
+
+
+<section id="signup2" class="screen">
+  <div class="bar"><span onclick="go('signup')">‹ Voltar</span><img src="vickz_logo.png"/><span>Já tem conta? <b onclick="go('login')">Entrar</b></span></div>
+  <div class="stepper"><span>1 Dados Pessoais</span><span class="on">2 Dados Profissionais</span><span>3 Confirmação</span></div>
+  <div class="pad">
+    <h1>Dados profissionais</h1>
+    <p class="sub">CREA/CAU e atuação. Mesmo padrão das telas 1–5.</p>
+    <label>Profissão *</label>
+    <div class="inp"><select><option>Engenheiro Civil</option><option>Arquiteto</option><option>Técnico</option></select></div>
+    <label>Conselho *</label>
+    <div class="row"><div class="inp"><select><option>CREA</option><option>CAU</option></select></div><div class="inp"><input placeholder="UF-000000/D"/></div></div>
+    <label>Empresa / escritório</label>
+    <div class="inp">🏢 <input placeholder="Nome da empresa"/></div>
+    <label>Cidade de atuação *</label>
+    <div class="row"><div class="inp"><input placeholder="Cidade"/></div><div class="inp"><select><option>PR</option><option>SP</option><option>SC</option></select></div></div>
+    <button class="btn ghost" type="button" onclick="go('signup')">‹ Voltar</button>
+    <button class="btn" onclick="go('signup3')">Avançar →</button>
+  </div>
+</section>
+<section id="signup3" class="screen">
+  <div class="bar"><span onclick="go('signup2')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="stepper"><span>1 Dados Pessoais</span><span>2 Dados Profissionais</span><span class="on">3 Confirmação</span></div>
+  <div class="pad">
+    <h1>Confirmação</h1>
+    <p class="sub">Revise e conclua o cadastro para entrar no dashboard.</p>
+    <div class="box"><b>Conta</b><div class="sub">E-mail e telefone informados no passo 1.</div></div>
+    <div class="box"><b>Registro profissional</b><div class="sub">CREA/CAU será validado depois (status pendente no dashboard).</div></div>
+    <label class="chk"><input type="checkbox"/> Declaro que as informações são verdadeiras.</label>
+    <button class="btn ghost" type="button" onclick="go('signup2')">‹ Voltar</button>
+    <button class="btn" onclick="go('dash')">Concluir e entrar →</button>
+  </div>
+</section>
+
+<section id="dash" class="screen">
+  <div class="bar"><span>☰</span><img src="vickz_logo.png"/><span>🔔 Eng. Responsável ▾</span></div>
+  <div class="banner">
+    <h2>Vistoriar hoje.<br><span>Evitar conflitos amanhã.</span></h2>
+    <div style="font-size:11px;opacity:.85">TÉCNICA | PREVENÇÃO | BOA VIZINHANÇA</div>
+  </div>
+  <div class="box">
+    <div class="row"><b>Ações Rápidas</b><span class="link">Ver todas</span></div>
+    <div class="row" style="margin-top:8px;font-size:11px;font-weight:700;text-align:center">
+      <div style="background:var(--navy);color:#fff;border-radius:10px;padding:10px 6px">Copiar Logo</div>
+      <div style="background:var(--orange);color:#fff;border-radius:10px;padding:10px 6px">Baixar Avatar</div>
+      <div style="border:1px solid #ddd;border-radius:10px;padding:10px 6px">Manual da Marca</div>
+      <div style="border:1px solid #ddd;border-radius:10px;padding:10px 6px">Diretrizes</div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="row">
+      <div>👤 <b>Eng. Responsável</b><div class="sub">CREA / CAU</div><span style="background:#FFF3CD;color:#8A6D3B;font-size:11px;padding:2px 6px;border-radius:6px">Pendente de validação</span></div>
+      <div class="sub" style="text-align:right">contato@vickzvistoria.com.br<br>(00) 00000-0000<br>[Cidade - Estado]</div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="row"><b>Indicadores do Projeto</b><span class="link">Ver detalhes</span></div>
+    <div class="kpis" style="margin-top:8px">
+      <div>📋<b>0</b>Vistorias</div>
+      <div>🏢<b>0</b>Laudos</div>
+      <div>🏠<b>0</b>Imóveis</div>
+      <div>👥<b>0/6</b>Lindeiros</div>
+    </div>
+    <div class="sub" style="margin-top:8px">☁ Status do Sistema · <b style="color:#1B8A3E">Operacional</b> (offline-first)</div>
+  </div>
+  <div class="box">
+    <b>Módulos Operacionais</b>
+    <div class="mod" onclick="go('obra')"><div class="n" style="background:var(--navy)">1</div><div><b>Dados do Empreendimento</b><div class="sub">Construtora, endereço, projeto e delimitação</div></div></div>
+    <div class="mod" onclick="go('viz')"><div class="n" style="background:var(--orange)">2</div><div><b>Gestão de Vizinhança</b><div class="sub">Imóveis lindeiros, fachadas e autorizações</div></div></div>
+    <div class="mod" onclick="go('vistoria')"><div class="n" style="background:var(--red)">3</div><div><b>Vistoria Fotográfica</b><div class="sub">Registro em campo com marcação de patologias</div></div></div>
+    <div class="mod" onclick="go('laudo')"><div class="n" style="background:var(--navy)">4</div><div><b>Fechamento e Laudo Técnico</b><div class="sub">Assinatura digital e ART/RRT</div></div></div>
+  </div>
+  
+  <div class="box">
+    <div class="row"><b>Normas e Recursos</b><span class="link" onclick="go('normas')">Ver todos</span></div>
+    <div class="row" style="margin-top:10px;text-align:center;font-size:11px;font-weight:700;gap:6px">
+      <div class="nbox" onclick="go('n13752')" style="border:1px solid #D8DEE6;border-radius:10px;padding:10px 4px;cursor:pointer">ABNT<br>NBR 13752<br><span class="sub">Vistoria cautelar</span></div>
+      <div class="nbox" onclick="go('nibape')" style="border:1px solid #D8DEE6;border-radius:10px;padding:10px 4px;cursor:pointer">IBAPE/SP<br>2025<br><span class="sub">Orientações</span></div>
+      <div class="nbox" onclick="go('n9061')" style="border:1px solid #D8DEE6;border-radius:10px;padding:10px 4px;cursor:pointer">ABNT<br>NBR 9061<br><span class="sub">Escavações</span></div>
+      <div class="nbox" onclick="go('ajuda')" style="border:1px solid #D8DEE6;border-radius:10px;padding:10px 4px;cursor:pointer">Central<br>de Ajuda</div>
+      <div class="nbox" onclick="go('tutoriais')" style="border:1px solid #D8DEE6;border-radius:10px;padding:10px 4px;cursor:pointer">Tutoriais</div>
+    </div>
+  </div>
+
+  <div class="nav" data-active="dash"></div>
+</section>
+
+<section id="obra" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span>Salvar e sair</span></div>
+  <div class="stepper"><span>1 Dados Pessoais</span><span class="on">2 Dados do Empreendimento</span><span>3 Vizinhança</span><span>4 Confirmação</span></div>
+  <div class="pad">
+    <h1>Dados do Empreendimento</h1>
+    <p class="sub">Informe as informações principais do empreendimento.</p>
+    <label>Nome do empreendimento *</label>
+    <div class="inp">🏢 <input value="Residencial Parque das Araucárias"/></div>
+    <label>Endereço do empreendimento *</label>
+    <div class="inp">📍 <input value="Rua das Flores, 123"/></div>
+    <div class="row">
+      <div class="inp"><input value="Londrina"/></div>
+      <div class="inp"><input value="PR" style="width:50px"/></div>
+      <div class="inp"><input value="86000-000"/></div>
+    </div>
+    <div class="row">
+      <div><label>Eng. projeto *</label><div class="inp">👤 <input value="Ana Paula Souza"/></div></div>
+      <div><label>Eng. execução *</label><div class="inp">👤 <input value="Carlos Eduardo Lima"/></div></div>
+    </div>
+    <div class="row">
+      <div class="inp"><select><option>CREA</option></select><input value="PR123456/D"/></div>
+      <div class="inp"><select><option>CREA</option></select><input value="PR654321/D"/></div>
+    </div>
+    <div class="row"><b>Localização no Mapa</b><span class="link" onclick="window.open('https://maps.google.com/?q=Londrina+PR')">Abrir no Google Maps</span></div>
+    <p class="sub">Selecione o terreno da obra (azul) e os vizinhos (vermelho).</p>
+    <div class="mapbox"><iframe src="empreendimento.html"></iframe></div>
+    <div class="row" style="margin-top:10px"><b>Terrenos Vizinhos Selecionados</b><span class="link" style="color:var(--red)">Limpar Seleções</span></div>
+    <div class="mod"><span class="badge">1</span><div><b>Sr. João da Silva</b><div class="sub">Rua das Flores, 115 | Matrícula 12.346 | Residencial</div></div></div>
+    <div class="mod"><span class="badge">2</span><div><b>Sra. Maria Oliveira</b><div class="sub">Rua das Flores, 131 | Matrícula 12.347 | Residencial</div></div></div>
+    <div class="mod"><span class="badge">3</span><div><b>Construtora Alpha Ltda.</b><div class="sub">Rua das Flores, 123 (Fundos) | 12.348 | Terreno vazio</div></div></div>
+    <button class="btn" onclick="go('viz')">Avançar →</button>
+  </div>
+  <div class="nav" data-active="obra"></div>
+</section>
+
+<section id="viz" class="screen">
+  <div class="bar"><span onclick="go('obra')">‹ Voltar</span><img src="vickz_logo.png"/><span>Salvar e sair</span></div>
+  <div class="stepper"><span>1 Dados Pessoais</span><span>2 Dados do Empreendimento</span><span class="on">3 Vizinhança</span><span>4 Confirmação</span></div>
+  <div class="pad">
+    <h1>Imóveis Vizinhos</h1>
+    <p class="sub">Selecione e cadastre os imóveis que serão vistoriados.</p>
+    <div class="safe">ℹ Selecione no mapa cada terreno vizinho. Serão vistoriados apenas os imóveis sinalizados (1, 2 e 3).</div>
+    <div class="mapbox" style="margin-top:10px"><iframe src="empreendimento.html"></iframe></div>
+    <h2 style="color:var(--navy);font-size:16px">Terrenos Cadastrados</h2>
+    <div class="box">
+      <div class="row"><span class="badge">1</span><b>Terreno Lateral Esquerdo</b><span class="pill">Selecionado</span></div>
+      <div class="row"><div><label>Proprietário *</label><input value="Sr. João da Silva"/></div><div><label>Endereço</label><input value="Rua das Flores, 115"/></div></div>
+      <div class="row"><div><label>Matrícula</label><input value="12.346"/></div><div><label>Uso atual</label><select><option>Residencial</option></select></div><div><label>Contato</label><input value="(43) 99912-3456"/></div></div>
+    </div>
+    <div class="box">
+      <div class="row"><span class="badge">2</span><b>Terreno Lateral Direito</b><span class="pill">Selecionado</span></div>
+      <div class="row"><div><label>Proprietário *</label><input value="Sra. Maria Oliveira"/></div><div><label>Endereço</label><input value="Rua das Flores, 131"/></div></div>
+      <div class="row"><div><label>Matrícula</label><input value="12.347"/></div><div><label>Uso atual</label><select><option>Residencial</option></select></div><div><label>Contato</label><input value="(43) 99876-5452"/></div></div>
+    </div>
+    <div class="box">
+      <div class="row"><span class="badge">3</span><b>Terreno dos Fundos</b><span class="pill">Selecionado</span></div>
+      <div class="row"><div><label>Proprietário *</label><input value="Construtora Alpha Ltda."/></div><div><label>Endereço</label><input value="Rua das Flores, 123 (Fundos)"/></div></div>
+      <div class="row"><div><label>Matrícula</label><input value="12.348"/></div><div><label>Uso atual</label><select><option>Terreno vazio</option></select></div><div><label>Contato</label><input value="(43) 99123-9876"/></div></div>
+    </div>
+    <div class="row">
+      <button class="btn ghost" type="button">+ Adicionar outro imóvel</button>
+      <button class="btn" onclick="go('vistoria')">Avançar →</button>
+    </div>
+  </div>
+  <div class="nav" data-active="viz"></div>
+</section>
+
+<section id="vistoria" class="screen">
+  <iframe src="vistoria.html" style="width:100%;height:calc(100vh - 56px);border:0;display:block"></iframe>
+  <div class="nav" data-active="vistoria"></div>
+</section>
+
+
+<section id="n13752" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>ABNT NBR 13752:2024</h1>
+    <p class="sub">Perícias de engenharia na construção civil. A cautelar de vizinhança é o item 7.3.3.2 (constatação). Não estabelece nexo causal.</p>
+    <div class="box"><b>O que o laudo precisa ter</b><div class="sub">Solicitante, objeto, objetivo, pressupostos, data, descrição, relatório fotográfico, assinatura do profissional, anexos, ART/RRT.</div></div>
+    <div class="box"><b>Etapas 7.3.3.2.4</b><div class="sub">Tipologia; estrutura/cobertura/vedação; estado e patologias com local; padrão; idade; uso; aspectos relevantes.</div></div>
+    <a class="btn" style="display:block;text-align:center;text-decoration:none" href="https://www.abntcatalogo.com.br/" target="_blank">Abrir catálogo oficial ABNT</a>
+    <p class="sub">O texto integral é pago. Aqui no app fica o resumo operacional para o fluxo VICKZ.</p>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+<section id="nibape" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>IBAPE/SP 2025</h1>
+    <p class="sub">Norma de vistoria cautelar de vizinhança (procedimentos básicos executivos). Vigência 09/04/2025.</p>
+    <div class="box"><b>Níveis de vistoria</b><div class="sub">Define profundidade do exame (externo limitado até completo com interiores).</div></div>
+    <div class="box"><b>Laudo</b><div class="sub">Data, descrição + álbum, identificação do responsável, ART/RRT, autorização de acesso, croqui obra × lindeiros.</div></div>
+    <a class="btn" style="display:block;text-align:center;text-decoration:none" href="https://www.ibape-sp.org.br/" target="_blank">Abrir IBAPE/SP</a>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+<section id="n9061" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>ABNT NBR 9061</h1>
+    <p class="sub">Segurança de escavação a céu aberto — projeto e execução. Explica por que os lindeiros entram na cautelar (fundações vizinhas, distância à borda, utilidades).</p>
+    <div class="box"><b>No VICKZ</b><div class="sub">Use no módulo Empreendimento: tipo de fundação prevista, profundidade estimada e distância aos terrenos 1, 2 e 3.</div></div>
+    <a class="btn" style="display:block;text-align:center;text-decoration:none" href="https://www.abntcatalogo.com.br/" target="_blank">Abrir catálogo oficial ABNT</a>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+<section id="ajuda" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Central de ajuda</h1>
+    <div class="mod" onclick="go('obra')"><div class="n navy" style="background:#001F5B">1</div><div>Como cadastrar a obra e o mapa</div></div>
+    <div class="mod" onclick="go('viz')"><div class="n" style="background:#FF6600">2</div><div>Como incluir os 3 lindeiros</div></div>
+    <div class="mod" onclick="go('vistoria')"><div class="n" style="background:#E62117">3</div><div>Como fotografar e assinar o termo</div></div>
+    <p class="sub">Dúvidas de conta: contato@vickzvistoria.com.br</p>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+<section id="tutoriais" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Tutoriais</h1>
+    <div class="box"><b>1. Fachada em paisagem</b><div class="sub">Deite o celular. A primeira foto do imóvel é obrigatória.</div></div>
+    <div class="box"><b>2. Seta e quadrado</b><div class="sub">Dois toques para criar. Arraste as pontas. Só vermelho #E62117.</div></div>
+    <div class="box"><b>3. Termo</b><div class="sub">Preencha os dados antes das fotos. No fim, o declarante assina na tela.</div></div>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+<section id="normas" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Normas e recursos</h1>
+    <div class="mod" onclick="go('n13752')"><div class="n" style="background:#001F5B">ABNT</div><div>NBR 13752:2024</div></div>
+    <div class="mod" onclick="go('nibape')"><div class="n" style="background:#FF6600">IBAPE</div><div>Norma 2025</div></div>
+    <div class="mod" onclick="go('n9061')"><div class="n" style="background:#001F5B">ABNT</div><div>NBR 9061</div></div>
+    <div class="mod" onclick="go('ajuda')"><div class="n" style="background:#2B6CB0">?</div><div>Central de ajuda</div></div>
+    <div class="mod" onclick="go('tutoriais')"><div class="n" style="background:#2B6CB0">▶</div><div>Tutoriais</div></div>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+
+<section id="laudo" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Fechamento e Laudo Técnico</h1>
+    <p class="sub">Consolida termos assinados, fotos e ART dos 3 imóveis.</p>
+    <div class="mod"><div class="n" style="background:var(--red)">1</div><div>João da Silva — termo + fotos</div></div>
+    <div class="mod"><div class="n" style="background:var(--red)">2</div><div>Maria Oliveira — termo + fotos</div></div>
+    <div class="mod"><div class="n" style="background:var(--red)">3</div><div>Construtora Alpha — termo + fotos</div></div>
+    <button class="btn">Gerar pacote do laudo</button>
+  </div>
+  <div class="nav" data-active="laudo"></div>
+</section>
+
+</div>
+<script>
+const NAV=[['dash','Dashboard'],['obra','Empreendimento'],['viz','Vizinhança'],['vistoria','Vistoria'],['laudo','Laudo']];
+function paint(){
+  document.querySelectorAll('.nav').forEach(n=>{
+    const act=n.getAttribute('data-active');
+    n.innerHTML=NAV.map(([id,l])=>`<button class="${id===act?'on':''}" onclick="go('${id}')">${l}</button>`).join('');
+  });
+}
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+paint();
+const q = new URLSearchParams(location.search).get('s');
+if (q && document.getElementById(q)) go(q);
+</script>
+</body>
+</html>

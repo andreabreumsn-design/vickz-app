@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VICKZ — Mapa</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--navy:#001F5B;--orange:#FF6600;--red:#E62117}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,sans-serif;background:#F4F6F8}
+.bar{background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 12px;font-size:13px}
+.bar img{height:32px}
+#map{height:calc(100vh - 150px);width:100%}
+.tools{display:flex;flex-wrap:wrap;gap:6px;padding:8px;background:#fff}
+button{border:0;border-radius:10px;padding:10px 12px;font-weight:800;cursor:pointer}
+.obra{background:#1a4a9c;color:#fff}
+.vis{background:var(--red);color:#fff}
+.ok{background:var(--orange);color:#fff}
+.ghost{background:#fff;border:1px solid var(--navy);color:var(--navy)}
+.hint{font-size:12px;color:#5C6770;padding:0 10px 8px}
+</style>
+</head>
+<body>
+<div class="bar"><span onclick="history.back()">‹ Voltar</span><img src="vickz_logo.png" alt=""/><span>Mapa</span></div>
+<div class="tools">
+  <button class="obra" onclick="modo='obra'">Obra (azul)</button>
+  <button class="vis" onclick="modo='vistoria'">Vistoria (vermelho)</button>
+  <button class="ok" onclick="fechar()">Fechar terreno</button>
+  <button class="ghost" onclick="desfazer()">Desfazer ponto</button>
+  <button class="ghost" onclick="acrescentar()">+ Acrescentar terreno</button>
+</div>
+<p class="hint">Toque os cantos do lote → Fechar terreno → nome. Azul = obra. Vermelho = vistoria. Sem limite de lotes.</p>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map').setView([-23.31,-51.16], 18);
+L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',{maxZoom:21,attribution:'Google'}).addTo(map);
+let modo='vistoria', pts=[], layers=[], nObra=0, nVis=0;
+map.on('click', e=>{
+  pts.push(e.latlng);
+  L.circleMarker(e.latlng,{radius:6,color:modo==='obra'?'#001F5B':'#E62117'}).addTo(map);
+});
+function fechar(){
+  if(pts.length<3){alert('Marque pelo menos 3 cantos.');return;}
+  const nome=prompt('Nome do terreno:')|| (modo==='obra'?'Empreendimento':'Vizinho');
+  const color=modo==='obra'?'#1a4a9c':'#E62117';
+  const poly=L.polygon(pts,{color,weight:2,fillOpacity:.28}).addTo(map);
+  const n=modo==='obra'?++nObra:++nVis;
+  const c=poly.getBounds().getCenter();
+  L.marker(c,{icon:L.divIcon({className:'',html:`<div style="background:#fff;border:2px solid ${color};border-radius:8px;padding:2px 6px;font:800 11px sans-serif;white-space:nowrap">${n} — ${nome}</div>`})}).addTo(map);
+  layers.push(poly);
+  const list=JSON.parse(localStorage.getItem('vickz_lotes')||'[]');
+  list.push({tipo:modo,nome,n,latlngs:pts.map(p=>[p.lat,p.lng])});
+  localStorage.setItem('vickz_lotes',JSON.stringify(list));
+  pts=[];
+}
+function desfazer(){pts.pop();}
+function acrescentar(){pts=[];modo='vistoria';alert('Modo vistoria. Toque os cantos do próximo terreno.');}
+</script>
+</body>
+</html>

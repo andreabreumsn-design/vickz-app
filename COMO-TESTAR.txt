@@ -1,0 +1,14 @@
+VICKZ — teste do fluxo completo (Passo.docx + telas anteriores)
+
+Abrir: index.html (Chrome)
+
+1  Login → Entrar
+2  Ou Cadastre-se: pessoais → profissionais (CREA + logo) → confirmação
+3  Dashboard: Anexo 2 (logo, CREA, matrículas, projeto)
+4  Módulo 1 Empreendimento: construtora, vistoriador, anexos
+5  Mapa: empreendimento.html — azul obra / vermelho vizinhos / + terrenos
+6  Vizinhança: cards + adicionar imóvel
+7  Anexo 1 do 1º imóvel (campos oficiais) + foto da fachada
+8  Fotos ilimitadas + seta/quadrado + conversa de agendamento
+9  Assinar Anexo 1 + ART → próximo imóvel
+10 Laudo 1 a 1
