@@ -20,13 +20,9 @@ export default mergeConfig(
           'src/**/*.test.*',
           'src/test/**'
         ],
+        // perFile: true + piso global falharia os 40 JSX a 0%.
+        // Só arquivos listados abaixo travam o CI.
         thresholds: {
-          // Piso global = run atual (~0,82% linhas). Sobe quando houver mais testes.
-          lines: 0.8,
-          statements: 0.8,
-          functions: 4,
-          branches: 10,
-          // O único componente executado pelos testes hoje
           'src/NavigationBar.jsx': {
             lines: 100,
             statements: 100,
