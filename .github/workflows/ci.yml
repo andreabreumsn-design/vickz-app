@@ -20,14 +20,57 @@ jobs:
           npm install
       - name: Testes + cobertura
         run: npx vitest run --coverage
-      - name: Publicar resumo de cobertura
+      - name: Resumo de cobertura no job
+        if: always()
+        run: |
+          python3 - << 'PY'
+          import json, os, pathlib
+          p = pathlib.Path("coverage/coverage-summary.json")
+          out = os.environ["GITHUB_STEP_SUMMARY"]
+          if not p.exists():
+              open(out, "a").write("## Cobertura\nArquivo coverage-summary.json não gerado.\n")
+              raise SystemExit(0)
+          d = json.loads(p.read_text())
+          t = d["total"]
+          def pct(key):
+              return t[key]["pct"]
+          lines = [
+              "## Cobertura Vitest",
+              "",
+              "| Métrica | Coberto | Total | % |",
+              "|---|---:|---:|---:|",
+              f"| Linhas | {t['lines']['covered']} | {t['lines']['total']} | {pct('lines')} |",
+              f"| Funções | {t['functions']['covered']} | {t['functions']['total']} | {pct('functions')} |",
+              f"| Branches | {t['branches']['covered']} | {t['branches']['total']} | {pct('branches')} |",
+              "",
+              "Thresholds: `NavigationBar.jsx` 100% · chrome ≥ 14%.",
+              "",
+              "### Arquivos com cobertura > 0",
+              "",
+              "| Arquivo | Linhas % |",
+              "|---|---:|",
+          ]
+          rows = []
+          for path, stats in d.items():
+              if path == "total":
+                  continue
+              lp = stats.get("lines", {}).get("pct", 0)
+              if lp > 0:
+                  rows.append((lp, path.split("/src/")[-1] if "/src/" in path else path))
+          rows.sort(reverse=True)
+          for lp, name in rows:
+              lines.append(f"| `{name}` | {lp} |")
+          if not rows:
+              lines.append("| — | 0 |")
+          open(out, "a").write("\n".join(lines) + "\n")
+          print(f"::notice::Cobertura linhas {pct('lines')}% · funções {pct('functions')}%")
+          PY
+      - name: Publicar HTML de cobertura
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: |
-            coverage/coverage-summary.json
-            coverage/index.html
+          path: coverage
           if-no-files-found: ignore
       - run: npx vite build
   html-producao:
