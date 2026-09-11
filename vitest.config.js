@@ -19,7 +19,21 @@ export default mergeConfig(
           'src/main.jsx',
           'src/**/*.test.*',
           'src/test/**'
-        ]
+        ],
+        thresholds: {
+          // Piso global = run atual (~0,82% linhas). Sobe quando houver mais testes.
+          lines: 0.8,
+          statements: 0.8,
+          functions: 4,
+          branches: 10,
+          // O único componente executado pelos testes hoje
+          'src/NavigationBar.jsx': {
+            lines: 100,
+            statements: 100,
+            functions: 100,
+            branches: 80
+          }
+        }
       }
     }
   })
