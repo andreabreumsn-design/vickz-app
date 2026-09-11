@@ -14,9 +14,12 @@ jobs:
         with:
           node-version: "20"
           cache: npm
-      - run: npm install
-      - run: npm test
-      - run: npm run build
+      - name: Instalar sem os binários do Windows do repo
+        run: |
+          rm -rf node_modules
+          npm install
+      - run: npx vitest run
+      - run: npx vite build
   html-producao:
     runs-on: ubuntu-latest
     steps:
