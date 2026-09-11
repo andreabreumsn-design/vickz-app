@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>VICKZ</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+:root{--navy:#001F5B;--orange:#FF6600;--red:#E62117;--bg:#F4F6F8;--muted:#5C6770}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Inter,system-ui,sans-serif;background:#0b1220;color:#1a1a1a}
+.phone{max-width:430px;margin:0 auto;background:var(--bg);min-height:100vh}
+.screen{display:none}.screen.on{display:block}
+.bar{background:var(--navy);color:#fff;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;font-size:13px;position:sticky;top:0;z-index:30}
+.bar img{height:32px}
+.bar b{color:var(--orange)}
+.hero{position:relative;min-height:200px;background:#071433 center/cover no-repeat;color:#fff;text-align:center;padding:28px 16px 56px;
+background-image:linear-gradient(180deg,#001428cc,#001F5Baa),url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=900&q=60')}
+.hero img.logo{height:64px;margin-top:8px}
+.hero .help{position:absolute;top:12px;right:14px;font-size:13px;z-index:2}
+.card{background:#fff;border-radius:22px 22px 0 0;margin-top:-28px;padding:28px 16px 24px;position:relative;z-index:3}
+h1{margin:0 0 8px;color:var(--navy);font-size:22px;padding-top:4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+.inp{display:flex;align-items:center;gap:8px;border:1px solid #D8DEE6;border-radius:12px;padding:11px 12px;margin:0 0 10px;background:#fff}
+.inp input,.inp select,textarea{border:0;outline:0;flex:1;font:inherit;background:transparent;min-width:0;width:100%}
+textarea{min-height:72px}
+.btn{width:100%;border:0;background:var(--orange);color:#fff;font-weight:800;padding:14px;border-radius:12px;cursor:pointer;font-size:16px;margin-top:8px}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--navy)}
+.btn.navy{background:var(--navy)}
+.row{display:flex;gap:8px;align-items:flex-start}
+.row>*{flex:1;min-width:0}
+.link{color:var(--orange);font-weight:700;cursor:pointer}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0 12px}
+.foot3{display:flex;border-top:1px solid #eee;margin-top:16px}
+.foot3 div{flex:1;text-align:center;padding:12px 4px;font-size:10px;font-weight:800;color:var(--navy)}
+.stepper{display:flex;justify-content:space-between;padding:12px 16px 0;font-size:11px;color:#9aa;gap:4px}
+.stepper .on{color:var(--orange);font-weight:800}
+.pad{padding:12px 16px 96px}
+.banner{background:linear-gradient(90deg,#0b1d3a,#1a3a6b),url('https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=900&q=50') center/cover;color:#fff;padding:16px}
+.banner h2{margin:0;font-size:20px}
+.banner h2 span{color:var(--orange)}
+.box{background:#fff;border-radius:14px;padding:12px;margin:10px 16px;box-shadow:0 1px 4px #0001}
+.pad .box{margin-left:0;margin-right:0}
+.kpis{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;text-align:center;font-size:11px}
+.kpis b{display:block;font-size:18px}
+.mod{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;cursor:pointer}
+.n{width:28px;height:28px;border-radius:8px;color:#fff;display:grid;place-items:center;font-weight:800;flex-shrink:0}
+.nav{position:sticky;bottom:0;display:flex;background:var(--navy);border-radius:16px 16px 0 0}
+.nav button{flex:1;background:none;border:0;color:#9BB0C9;padding:12px 2px 14px;font-size:10px;font-weight:800}
+.nav button.on{color:var(--orange)}
+.pill{display:inline-block;background:#E8F6EE;color:#1B8A3E;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.badge{width:22px;height:22px;border-radius:11px;background:var(--red);color:#fff;display:inline-grid;place-items:center;font-size:12px;font-weight:800}
+label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin:8px 0 4px}
+.safe{background:#EEF3FF;border-radius:12px;padding:10px;font-size:12px;color:var(--navy)}
+.files{font-size:12px;color:var(--muted)}
+@media(max-width:430px){.row{flex-wrap:wrap}.kpis{grid-template-columns:1fr 1fr}}
+#miniMap{width:100%;min-height:360px}
+.leaflet-overlay-pane{z-index:650}
+</style>
+</head>
+<body>
+<div class="phone">
+
+<section id="login" class="screen on">
+  <div class="hero">
+    <div class="help">Ajuda</div>
+    <img class="logo" src="vickz_logo.png" alt="VICKZ"/>
+    <div style="font-weight:800;letter-spacing:1px">VICKZ</div>
+    <div style="font-size:11px">VISTORIA CAUTELAR<br><span style="color:var(--orange)">DE VIZINHANÇA</span></div>
+    <p>Segurança técnica<br>para um convívio mais tranquilo.</p>
+  </div>
+  <div class="card">
+    <h1>Acesse sua conta</h1>
+    <p class="sub">Entre para gerenciar suas vistorias, laudos e documentos.</p>
+    <div class="inp">✉ <input id="loginEmail" placeholder="E-mail"/></div>
+    <div class="inp">🔒 <input type="password" placeholder="Senha"/></div>
+    <div class="row" style="font-size:13px;margin:6px 0 12px">
+      <label class="chk" style="margin:0"><input type="checkbox" checked/> Lembrar de mim</label>
+      <span class="link">Esqueceu a senha?</span>
+    </div>
+    <button class="btn" onclick="go('prof')">Entrar →</button>
+    <p style="text-align:center;color:#aaa;margin:14px 0">ou</p>
+    <button class="btn ghost" type="button" onclick="go('prof')">G Entrar com Google</button>
+    <p style="text-align:center;margin:14px 0 0">Não tem uma conta? <span class="link" onclick="go('signup')">Cadastre-se</span></p>
+    <div class="foot3">
+      <div>🛡<br>PREVENÇÃO</div>
+      <div>👥<br>BOA VIZINHANÇA</div>
+      <div>📊<br>SEGURANÇA PATRIMONIAL</div>
+    </div>
+  </div>
+</section>
+
+<section id="signup" class="screen">
+  <div class="bar"><span onclick="go('login')">‹ Voltar</span><img src="vickz_logo.png"/><span>Já tem conta? <b onclick="go('login')">Entrar</b></span></div>
+  <div class="stepper"><span class="on">1 Dados Pessoais</span><span>2 Dados Profissionais</span><span>3 Confirmação</span></div>
+  <div class="pad">
+    <h1>Criar conta</h1>
+    <p class="sub">Preencha seus dados para utilizar o VICKZ.</p>
+    <div class="inp">👤 <input id="suNome" placeholder="Nome completo *"/></div>
+    <div class="inp">✉ <input id="suEmail" placeholder="E-mail *"/></div>
+    <div class="inp">📞 <input placeholder="Telefone / WhatsApp *"/></div>
+    <div class="inp">📅 <input placeholder="Data de nascimento *"/></div>
+    <div class="row">
+      <div class="inp">📍 <input placeholder="Cidade *"/></div>
+      <div class="inp"><select><option>PR</option><option>SP</option><option>SC</option></select></div>
+    </div>
+    <label class="chk"><input type="checkbox"/> Li e concordo com os <span class="link">Termos de Uso</span>.</label>
+    <button class="btn" onclick="go('signup2')">Avançar →</button>
+    <div class="safe" style="margin-top:14px">Seus dados estão protegidos.</div>
+  </div>
+</section>
+
+<section id="signup2" class="screen">
+  <div class="bar"><span onclick="go('signup')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="stepper"><span>1 Dados Pessoais</span><span class="on">2 Dados Profissionais</span><span>3 Confirmação</span></div>
+  <div class="pad">
+    <h1>Dados profissionais</h1>
+    <p class="sub">CREA/CAU, logo do profissional e atuação.</p>
+    <label>Nome do profissional *</label>
+    <div class="inp">👤 <input id="profNome" placeholder="Eng. / Arq. responsável"/></div>
+    <label>Conselho e registro *</label>
+    <div class="row">
+      <div class="inp"><select><option>CREA</option><option>CAU</option></select></div>
+      <div class="inp"><input id="profCrea" placeholder="PR-123456/D"/></div>
+    </div>
+    <label>Empresa / escritório</label>
+    <div class="inp">🏢 <input id="profEmp" placeholder="Nome da empresa"/></div>
+    <label>Logo do profissional / escritório</label>
+    <input type="file" accept="image/*" onchange="lerLogo(this)"/>
+    <div id="logoPrev" class="files"></div>
+    <button class="btn ghost" onclick="go('signup')">‹ Voltar</button>
+    <button class="btn" onclick="go('signup3')">Avançar →</button>
+  </div>
+</section>
+
+<section id="signup3" class="screen">
+  <div class="bar"><span onclick="go('signup2')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="stepper"><span>1 Dados Pessoais</span><span>2 Dados Profissionais</span><span class="on">3 Confirmação</span></div>
+  <div class="pad">
+    <h1>Confirmação</h1>
+    <div class="box"><b>Conta</b><div class="sub">E-mail e telefone do passo 1.</div></div>
+    <div class="box"><b>Registro profissional</b><div class="sub">CREA/CAU e logo — Anexo 2 do dashboard.</div></div>
+    <label class="chk"><input type="checkbox"/> Declaro que as informações são verdadeiras.</label>
+    <button class="btn" onclick="go('prof')">Concluir e cadastrar vistoriador →</button>
+  </div>
+</section>
+
+<section id="prof" class="screen">
+  <div class="bar"><span onclick="go('login')">‹ Voltar</span><img src="vickz_logo.png"/><span>Vistoriador</span></div>
+  <div class="stepper"><span class="on">1 Profissional</span><span>2 Empreendimento</span><span>3 Vizinhança</span><span>4 Vistoria</span></div>
+  <div class="pad">
+    <h1>Cadastro do profissional vistoriador</h1>
+    <p class="sub">Quem vai executar a vistoria em campo. A logo aparece no dashboard e no termo.</p>
+    <label>Nome completo *</label>
+    <div class="inp">👤 <input id="visNome" placeholder="Nome do engenheiro / arquiteto"/></div>
+    <label>Conselho *</label>
+    <div class="row">
+      <div class="inp"><select id="visCons"><option>CREA</option><option>CAU</option></select></div>
+      <div class="inp"><input id="visCrea" placeholder="UF-000000/D"/></div>
+    </div>
+    <label>Empresa / escritório</label>
+    <div class="inp">🏢 <input id="visEmp" placeholder="Nome da empresa"/></div>
+    <label>Telefone / WhatsApp</label>
+    <div class="inp">📞 <input id="visTel" placeholder="(00) 00000-0000"/></div>
+    <label>E-mail</label>
+    <div class="inp">✉ <input id="visMail" placeholder="contato@escritorio.com"/></div>
+    <label>Logo do profissional / escritório</label>
+    <div class="box" style="text-align:center">
+      <img id="visLogoImg" src="vickz_logo.png" alt="Logo" style="max-height:96px;max-width:100%;object-fit:contain"/>
+      <div class="sub" id="visLogoNome">Toque para enviar PNG ou JPG</div>
+      <input type="file" accept="image/*" onchange="logoVistoriador(this)"/>
+    </div>
+    <button class="btn" onclick="salvarProf();go('dash')">Salvar e ir ao dashboard →</button>
+  </div>
+</section>
+
+<section id="dash" class="screen">
+  <div class="bar"><span>☰</span><img src="vickz_logo.png"/><span>🔔 Eng. Responsável ▾</span></div>
+  <div class="banner">
+    <h2>Vistoriar hoje.<br><span>Evitar conflitos amanhã.</span></h2>
+    <div style="font-size:11px;opacity:.85">TÉCNICA | PREVENÇÃO | BOA VIZINHANÇA</div>
+  </div>
+  <div class="box">
+    <div class="row"><b>Ações Rápidas</b><span class="link">Ver todas</span></div>
+    <div class="row" style="margin-top:8px;font-size:11px;font-weight:700;text-align:center">
+      <div style="background:var(--navy);color:#fff;border-radius:10px;padding:10px 6px">Copiar Logo</div>
+      <div style="background:var(--orange);color:#fff;border-radius:10px;padding:10px 6px">Baixar Avatar</div>
+      <div style="border:1px solid #ddd;border-radius:10px;padding:10px 6px">Manual</div>
+      <div style="border:1px solid #ddd;border-radius:10px;padding:10px 6px">Diretrizes</div>
+    </div>
+  </div>
+  <div class="box">
+    <div class="row">
+      <div>👤 <b id="dashNome">Eng. Responsável</b>
+        <div class="sub" id="dashCrea">CREA / CAU</div>
+        <span style="background:#FFF3CD;color:#8A6D3B;font-size:11px;padding:2px 6px;border-radius:6px">Pendente de validação</span>
+        <div class="link" style="margin-top:6px" onclick="go('signup2')">Editar dados do profissional</div>
+      </div>
+      <div class="sub" style="text-align:right">contato@vickzvistoria.com.br</div>
+    </div>
+    <div id="dashLogo" class="files" style="margin-top:8px"></div>
+  </div>
+  <div class="box">
+    <b>Anexo 2 — documentos do profissional e da obra</b>
+    <div class="sub">Logo, CREA/CAU, construtora, matrículas e projeto definidos no cadastro e no módulo 1.</div>
+    <div id="anexo2lista" class="files">Ainda sem anexos.</div>
+  </div>
+  <div class="box">
+    <div class="row"><b>Indicadores do Projeto</b><span class="link">Ver detalhes</span></div>
+    <div class="kpis" style="margin-top:8px">
+      <div>📋<b id="kVis">0</b>Vistorias</div>
+      <div>🏢<b id="kLau">0</b>Laudos</div>
+      <div>🏠<b id="kImo">0</b>Imóveis</div>
+      <div>👥<b id="kLin">0</b>Lindeiros</div>
+    </div>
+    <div class="sub" style="margin-top:8px">☁ Status · <b style="color:#1B8A3E">Operacional</b></div>
+  </div>
+  <div class="box">
+    <b>Módulos Operacionais</b>
+    <div class="mod" onclick="go('obra')"><div class="n" style="background:var(--navy)">1</div><div><b>Dados do Empreendimento</b><div class="sub">Construtora, matrículas e projeto</div></div></div>
+    <div class="mod" onclick="go('endereco')"><div class="n" style="background:#1a4a9c">1b</div><div><b>Endereço, nº predial e mapa</b><div class="sub">Pino vermelho no terreno da obra</div></div></div>
+    <div class="mod" onclick="go('mapa')"><div class="n" style="background:#1a4a9c">1c</div><div><b>Marcação dos lotes</b><div class="sub">Azul obra · vermelho vizinhos</div></div></div>
+    <div class="mod" onclick="go('viz')"><div class="n" style="background:var(--orange)">2</div><div><b>Gestão de Vizinhança</b><div class="sub">Imóveis lindeiros e autorizações</div></div></div>
+    <div class="mod" onclick="go('anexo1')"><div class="n" style="background:var(--red)">3</div><div><b>Vistoria fotográfica</b><div class="sub">Anexo 1 + fachada + fotos</div></div></div>
+    <div class="mod" onclick="go('laudo')"><div class="n" style="background:var(--navy)">4</div><div><b>Fechamento e Laudo</b><div class="sub">1 a 1 com conversa e assinatura</div></div></div>
+  </div>
+  <div class="box">
+    <div class="row"><b>Normas e Recursos</b><span class="link" onclick="go('normas')">Ver todos</span></div>
+    <div class="row" style="margin-top:10px;text-align:center;font-size:11px;font-weight:700">
+      <div onclick="go('n13752')">NBR 13752</div>
+      <div onclick="go('nibape')">IBAPE 2025</div>
+      <div onclick="go('n9061')">NBR 9061</div>
+      <div onclick="go('ajuda')">Ajuda</div>
+      <div onclick="go('tutoriais')">Tutoriais</div>
+    </div>
+  </div>
+  <div class="nav" data-active="dash"></div>
+</section>
+
+<section id="obra" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span>Salvar e sair</span></div>
+  <div class="stepper"><span>1 Profissional</span><span class="on">2 Empreendimento</span><span>3 Vizinhança</span><span>4 Vistoria</span></div>
+  <div class="pad">
+    <h1>Dados do Empreendimento</h1>
+    <label>Nome do empreendimento *</label>
+    <div class="inp">🏢 <input id="obraNome" value="Residencial Parque das Araucárias"/></div>
+    <label>Logradouro *</label>
+    <div class="inp">📍 <input id="obraEnd" value="Rua das Flores"/></div>
+    <div class="row">
+      <div>
+        <label>Nº predial *</label>
+        <div class="inp"><input id="obraNum" placeholder="Nº" value="123"/></div>
+      </div>
+      <div>
+        <label>Complemento</label>
+        <div class="inp"><input id="obraComp" placeholder="Apto / lote"/></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="inp"><input id="obraBairro" placeholder="Bairro"/></div>
+      <div class="inp"><input id="obraCid" value="Londrina"/></div>
+    </div>
+    <div class="row">
+      <div class="inp"><input id="obraUf" value="PR"/></div>
+      <div class="inp"><input id="obraCep" value="86000-000"/></div>
+    </div>
+    <label>Construtora / incorporadora *</label>
+    <div class="inp">🏢 <input id="obraConst" placeholder="Nome da construtora"/></div>
+    <label>Profissional que executa a vistoria *</label>
+    <div class="inp">👤 <input id="obraVist" placeholder="Nome"/></div>
+    <div class="inp"><input id="obraVistCrea" placeholder="CREA/CAU"/></div>
+    <label>Anexar matrículas</label>
+    <input type="file" multiple onchange="listaArq(this,'matList')"/>
+    <div id="matList" class="files"></div>
+    <label>Anexar projeto arquitetônico</label>
+    <input type="file" multiple onchange="listaArq(this,'projList')"/>
+    <div id="projList" class="files"></div>
+    <button class="btn" onclick="salvarObra();go('endereco')">Avançar → endereço e mapa</button>
+  </div>
+  <div class="nav" data-active="obra"></div>
+</section>
+
+<section id="endereco" class="screen">
+  <div class="bar"><span onclick="go('obra')">‹ Voltar</span><img src="vickz_logo.png"/><span>Nº predial</span></div>
+  <div class="stepper"><span>1 Obra</span><span class="on">2 Endereço / mapa</span><span>3 Vizinhos</span><span>4 Vistoria</span></div>
+  <div class="pad">
+    <h1>Mapa da obra</h1>
+    <p class="sub" id="endResumo">Pino vermelho no nº predial informado na aba anterior. Mapa satélite.</p>
+    <div class="row">
+      <div class="inp"><input id="mapLat" placeholder="Latitude" readonly/></div>
+      <div class="inp"><input id="mapLng" placeholder="Longitude" readonly/></div>
+    </div>
+    <div class="row" style="margin:8px 0">
+      <button class="btn navy" type="button" onclick="modoMapa='obra'">Obra azul</button>
+      <button class="btn" type="button" style="background:#E62117" onclick="modoMapa='vistoria'">Vizinho vermelho</button>
+    </div>
+    <div class="row">
+      <button class="btn ghost" type="button" onclick="fecharLote()">Fechar terreno</button>
+      <button class="btn ghost" type="button" onclick="if(ptsMapa.length)ptsMapa.pop()">Desfazer ponto</button>
+    </div>
+    <button class="btn navy" type="button" onclick="corrigirLoteAzul()">Corrigir terreno azul</button>
+    <div id="miniMap" style="height:360px;border-radius:12px;margin:10px 0;background:#111"></div>
+    <button class="btn navy" type="button" onclick="localizarEndereco()">Recentrar pino vermelho</button>
+    <button class="btn" onclick="go('viz')">Avançar → vizinhança</button>
+  </div>
+  <div class="nav" data-active="endereco"></div>
+</section>
+
+<section id="mapa" class="screen">
+  <div class="bar"><span onclick="go('endereco')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Lotes marcados</h1>
+    <div id="loteResumo" class="box"><div class="sub">Marque na aba Mapa, dentro do app.</div></div>
+    <button class="btn" onclick="go('viz')">Avançar → vizinhança</button>
+  </div>
+  <div class="nav" data-active="endereco"></div>
+</section>
+
+<section id="viz" class="screen">
+  <div class="bar"><span onclick="go('mapa')">‹ Voltar</span><img src="vickz_logo.png"/><span>Salvar e sair</span></div>
+  <div class="stepper"><span>1</span><span>2</span><span class="on">3 Vizinhança</span><span>4</span></div>
+  <div class="pad">
+    <h1>Imóveis vizinhos</h1>
+    <div class="safe">Serão vistoriados os imóveis sinalizados no mapa (vermelho). Quantos forem necessários.</div>
+    <div id="vizLista"></div>
+    <button class="btn ghost" type="button" onclick="addImovel()">+ Adicionar outro imóvel</button>
+    <button class="btn" onclick="abrirPrimeiro()">Avançar → Anexo 1 do 1º imóvel</button>
+  </div>
+  <div class="nav" data-active="viz"></div>
+</section>
+
+<section id="anexo1" class="screen">
+  <div class="bar"><span onclick="go('viz')">‹ Voltar</span><img src="vickz_logo.png"/><span id="a1tit">Imóvel</span></div>
+  <div class="pad">
+    <h1>Anexo 1 — Identificação</h1>
+    <p class="sub" id="a1sub">Preencha antes das fotos.</p>
+    <h2 style="color:var(--navy);font-size:15px">1. Identificação da vistoria</h2>
+    <label>Nº / Referência</label><div class="inp"><input id="a1ref"/></div>
+    <label>Data</label><div class="inp"><input id="a1data" type="date"/></div>
+    <label>Horário</label><div class="inp"><input id="a1hora" type="time"/></div>
+    <label>Endereço do imóvel vistoriado</label><div class="inp"><input id="a1end"/></div>
+    <label>Complemento / Unidade</label><div class="inp"><input id="a1comp" placeholder="Apto / Casa / Sala / Lote"/></div>
+    <label>Município / UF / CEP</label>
+    <div class="row">
+      <div class="inp"><input id="a1mun" placeholder="Município"/></div>
+      <div class="inp"><input id="a1uf" placeholder="UF"/></div>
+      <div class="inp"><input id="a1cep" placeholder="CEP"/></div>
+    </div>
+    <label>Empreendimento / obra</label><div class="inp"><input id="a1obra"/></div>
+    <label>Profissional responsável</label><div class="inp"><input id="a1prof"/></div>
+    <label>CREA / CAU</label><div class="inp"><input id="a1crea"/></div>
+    <h2 style="color:var(--navy);font-size:15px">2. Identificação do declarante</h2>
+    <label>Nome completo</label><div class="inp"><input id="a1decl"/></div>
+    <label>CPF / CNPJ</label><div class="inp"><input id="a1cpf"/></div>
+    <label>RG / órgão</label><div class="inp"><input id="a1rg"/></div>
+    <label>Qualidade</label>
+    <div class="inp"><select id="a1qual"><option>Proprietário</option><option>Possuidor</option><option>Representante legal</option><option>Síndico</option></select></div>
+    <label>Procuração / ata</label><div class="inp"><input id="a1proc"/></div>
+    <label>Telefone / e-mail</label><div class="inp"><input id="a1tel"/></div>
+    <label>Foto da fachada — tirar agora (paisagem) *</label>
+    <button class="btn navy" type="button" onclick="document.getElementById('camFach').click()">📷 Tirar foto da fachada</button>
+    <button class="btn ghost" type="button" onclick="document.getElementById('camFach').click()">Corrigir foto da fachada</button>
+    <input id="camFach" type="file" accept="image/*" capture="environment" style="display:none" onchange="fachada(this)"/>
+    <div id="fachPrev" class="files"></div>
+    <p class="sub">A declaração do termo Word só aparece no final, depois das fotos.</p>
+    <button class="btn" onclick="salvarAnexo1();go('fotos')">Avançar → fotos na hora</button>
+  </div>
+  <div class="nav" data-active="vistoria"></div>
+</section>
+
+<section id="fotos" class="screen">
+  <div class="bar"><span onclick="go('anexo1')">‹ Voltar</span><img src="vickz_logo.png"/><span>Fotos</span></div>
+  <div class="pad">
+    <h1>Registro fotográfico</h1>
+    <p class="sub" id="mkHint">1. Tire a foto. 2. Escreva o ambiente. 3. Se houver patologia, use a seta ou o quadrado na foto.</p>
+    <button class="btn navy" type="button" onclick="document.getElementById('camFoto').click()">📷 Tirar foto agora</button>
+    <input id="camFoto" type="file" accept="image/*" capture="environment" style="display:none" onchange="addFoto(this)"/>
+    <div id="editorFoto" class="box" style="display:none;padding:0;overflow:hidden;position:relative;touch-action:none;margin-top:10px">
+      <img id="fotoEdit" alt="" style="width:100%;display:block;pointer-events:none"/>
+      <canvas id="cvMk" style="position:absolute;left:0;top:0;width:100%;height:100%;z-index:5;touch-action:none"></canvas>
+    </div>
+    <label>Ambiente *</label>
+    <div class="inp"><input id="amb" placeholder="Ex.: Sala de estar" oninput="gravaTextoFoto()" disabled/></div>
+    <label>Patologia (se houver)</label>
+    <div class="inp"><input id="pat" placeholder="Ex.: Trinca na alvenaria" oninput="gravaTextoFoto()" disabled/></div>
+    <div class="row">
+      <button class="btn ghost" type="button" id="btnSeta" onclick="armarMarca('seta')" disabled>Seta vermelha</button>
+      <button class="btn ghost" type="button" id="btnQuad" onclick="armarMarca('quad')" disabled>Quadrado vermelho</button>
+    </div>
+    <div id="gal"></div>
+    <button class="btn ghost" type="button" onclick="document.getElementById('camFoto').click()">+ Mais foto na hora</button>
+    <button class="btn" onclick="go('assinar')">Avançar → declaração e assinatura</button>
+  </div>
+  <div class="nav" data-active="vistoria"></div>
+</section>
+
+<section id="assinar" class="screen">
+  <div class="bar"><span onclick="go('fotos')">‹ Voltar</span><img src="vickz_logo.png"/><span>Termo</span></div>
+  <div class="pad">
+    <h1>Termo de declaração</h1>
+    <p class="sub">Documento do Word — só nesta etapa final. Dados já puxados da identificação.</p>
+    <div class="box" id="termoPrev"></div>
+    <label>Anexo da conversa que agendou a vistoria</label>
+    <input type="file" accept="image/*,.pdf" onchange="listaArq(this,'convList')"/>
+    <div id="convList" class="files"></div>
+    <label>Assinatura digital do declarante / acompanhante</label>
+    <canvas id="sig1" width="360" height="120" style="width:100%;border:1px solid #D8DEE6;border-radius:12px;background:#fff;touch-action:none"></canvas>
+    <button class="btn ghost" type="button" onclick="limparSig('sig1')">Limpar</button>
+    <label>Assinatura digital do profissional</label>
+    <canvas id="sig2" width="360" height="120" style="width:100%;border:1px solid #D8DEE6;border-radius:12px;background:#fff;touch-action:none"></canvas>
+    <button class="btn ghost" type="button" onclick="limparSig('sig2')">Limpar</button>
+    <p class="sub">Desenhe com o dedo ou o mouse. As rubricas vão para o PDF e o Word.</p>
+    <label>ART / RRT (obrigatório para fechar)</label>
+    <input type="file" onchange="listaArq(this,'artList')"/>
+    <div id="artList" class="files"></div>
+    <button class="btn" onclick="fecharImovel()">Salvar vistoria deste imóvel e seguir →</button>
+  </div>
+  <div class="nav" data-active="vistoria"></div>
+</section>
+
+<section id="laudo" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Gerar relatórios</h1>
+    <p class="sub">PDF (imprimir/salvar) ou Word (.doc) — integral ou por imóvel.</p>
+    <button class="btn" onclick="relatorioIntegral('pdf')">PDF integral (todos)</button>
+    <button class="btn navy" onclick="relatorioIntegral('word')">Word integral (todos)</button>
+    <button class="btn navy" type="button" onclick="enviarGrok()">Enviar ao Grok / backend e abrir laudo</button>
+    <p class="sub" id="grokStatus">Backend: http://localhost:3001</p>
+    <div id="laudoLista"></div>
+  </div>
+  <div class="nav" data-active="laudo"></div>
+</section>
+
+<section id="n13752" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>ABNT NBR 13752:2024</h1>
+    <p class="sub">Cautelar de vizinhança = item 7.3.3.2. Não estabelece nexo causal.</p>
+    <a class="btn" style="display:block;text-align:center;text-decoration:none" href="https://www.abntcatalogo.com.br/" target="_blank">Catálogo ABNT</a>
+  </div>
+</section>
+<section id="nibape" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad"><h1>IBAPE/SP 2025</h1><p class="sub">Níveis de vistoria, álbum fotográfico, ART, autorização.</p></div>
+</section>
+<section id="n9061" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad"><h1>ABNT NBR 9061</h1><p class="sub">Escavação a céu aberto — contexto da escolha dos lindeiros.</p></div>
+</section>
+<section id="ajuda" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad"><h1>Central de ajuda</h1><p class="sub">contato@vickzvistoria.com.br</p></div>
+</section>
+<section id="tutoriais" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Tutoriais</h1>
+    <div class="box"><b>Fachada em paisagem</b><div class="sub">Primeira foto obrigatória.</div></div>
+    <div class="box"><b>Seta e quadrado</b><div class="sub">Só vermelho #E62117.</div></div>
+  </div>
+</section>
+<section id="normas" class="screen">
+  <div class="bar"><span onclick="go('dash')">‹ Voltar</span><img src="vickz_logo.png"/><span></span></div>
+  <div class="pad">
+    <h1>Normas e recursos</h1>
+    <div class="mod" onclick="go('n13752')"><div class="n" style="background:#001F5B">ABNT</div><div>NBR 13752:2024</div></div>
+    <div class="mod" onclick="go('nibape')"><div class="n" style="background:#FF6600">IBAPE</div><div>Norma 2025</div></div>
+    <div class="mod" onclick="go('n9061')"><div class="n" style="background:#001F5B">ABNT</div><div>NBR 9061</div></div>
+  </div>
+</section>
+
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const NAV=[['dash','Início'],['obra','Obra'],['endereco','Mapa'],['viz','Vizinhos'],['anexo1','Vistoria'],['laudo','Laudo']];
+function paint(){document.querySelectorAll('.nav').forEach(n=>{const act=n.getAttribute('data-active');n.innerHTML=NAV.map(([id,l])=>`<button class="${id===act?'on':''}" onclick="go('${id}')">${l}</button>`).join('');});}
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');window.scrollTo(0,0);if(id==='mapa')lerLotes();if(id==='endereco')setTimeout(initMiniMap,200);if(id==='viz')renderViz();if(id==='laudo')renderLaudo();if(id==='assinar')renderTermo();if(id==='dash')syncDash();}
+paint();
+
+let imoveis=[{nome:'Sr. João da Silva',end:'Rua das Flores, 115',ok:false},{nome:'Sra. Maria Oliveira',end:'Rua das Flores, 131',ok:false},{nome:'Construtora Alpha Ltda.',end:'Rua das Flores, 123 (Fundos)',ok:false}];
+let idx=0, tipoMk='seta', fotos=[], mkPts=[], fotoAtual=-1;
+
+function entrar(){ go('prof'); }
+function salvarProf(){
+  const n=document.getElementById('visNome').value||document.getElementById('profNome')?.value||'Eng. Responsável';
+  const c=(document.getElementById('visCons').value||'CREA')+' '+ (document.getElementById('visCrea').value||'');
+  document.getElementById('dashNome').textContent=n;
+  document.getElementById('dashCrea').textContent=c;
+  document.getElementById('obraVist').value=n;
+  document.getElementById('obraVistCrea').value=document.getElementById('visCrea').value;
+}
+function validarUpload(f,kind){
+  if(!f) return 'Nenhum arquivo selecionado.';
+  if(!f.size) return 'Arquivo vazio.';
+  const max=kind==='foto'?12*1024*1024:20*1024*1024;
+  if(f.size>max) return 'Arquivo grande demais ('+Math.round(f.size/1024)+' KB).';
+  const nome=(f.name||'').toLowerCase();
+  if(kind==='foto' || kind==='logo'){
+    const img=f.type.indexOf('image/')===0 || /\.(jpg|jpeg|png|webp|heic)$/.test(nome);
+    if(!img) return 'Envie uma imagem (JPG, PNG ou WEBP).';
+  }
+  return '';
+}
+function logoVistoriador(inp){
+  try{
+    const f=inp.files[0];
+    const e=validarUpload(f,'logo');
+    if(e){ alert(e); inp.value=''; return; }
+    const url=URL.createObjectURL(f);
+    document.getElementById('visLogoImg').src=url;
+    document.getElementById('visLogoNome').textContent=f.name;
+    document.getElementById('dashLogo').innerHTML='<img src="'+url+'" style="height:48px"/> '+f.name;
+  }catch(err){ alert('Não foi possível ler a logo. '+err.message); }
+}
+function lerLogo(inp){
+  logoVistoriador(inp);
+  const f=inp.files[0];
+  if(f) document.getElementById('logoPrev').textContent='Logo: '+f.name;
+}
+function listaArq(inp,id){
+  const el=document.getElementById(id);
+  try{
+    const files=[...inp.files];
+    if(!files.length){ el.innerHTML='<span style="color:#E62117">Nenhum arquivo enviado.</span>'; return; }
+    const linhas=files.map(f=>{
+      const e=validarUpload(f,'anexo');
+      return e? '<span style="color:#E62117">'+f.name+': '+e+'</span>' : '📎 '+f.name+' ('+Math.round(f.size/1024)+' KB)';
+    });
+    el.innerHTML=linhas.join('<br>');
+    syncDash();
+  }catch(err){ el.innerHTML='<span style="color:#E62117">Falha no anexo: '+err.message+'</span>'; }
+}
+let miniMap, miniPin, modoMapa='vistoria', ptsMapa=[], nVis=0, nObra=0, ultimoAzul=null;
+function enderecoObra(){
+  const num=document.getElementById('obraNum').value.trim();
+  const rua=document.getElementById('obraEnd').value.trim();
+  const bairro=document.getElementById('obraBairro').value.trim();
+  const cid=document.getElementById('obraCid').value.trim();
+  const uf=document.getElementById('obraUf').value.trim();
+  const cep=document.getElementById('obraCep').value.trim();
+  return [rua,num,bairro,cid,uf,cep,'Brasil'].filter(Boolean).join(', ');
+}
+function colocarPino(lat,lng){
+  lat=+lat; lng=+lng;
+  const la=document.getElementById('mapLat');
+  const lo=document.getElementById('mapLng');
+  if(la) la.value=lat.toFixed(6);
+  if(lo) lo.value=lng.toFixed(6);
+  if(!miniMap) return;
+  if(miniPin) miniMap.removeLayer(miniPin);
+  miniPin=L.layerGroup([
+    L.circleMarker([lat,lng],{radius:16,color:'#fff',weight:3,fillColor:'#E62117',fillOpacity:1}),
+    L.circleMarker([lat,lng],{radius:7,color:'#E62117',weight:0,fillColor:'#fff',fillOpacity:1})
+  ]).addTo(miniMap);
+  miniMap.setView([lat,lng],19);
+}
+function initMiniMap(){ localizarEndereco(); }
+function localizarEndereco(){
+  const q=enderecoObra();
+  const res=document.getElementById('endResumo');
+  if(res) res.textContent=q;
+  const el=document.getElementById('miniMap');
+  const lat=parseFloat((document.getElementById('mapLat')||{}).value)||-27.1550058;
+  const lng=parseFloat((document.getElementById('mapLng')||{}).value)||-48.5887781;
+  if(typeof L==='undefined'){
+    el.innerHTML='<div style="padding:16px;background:#fff">Sem Leaflet. <a target="_blank" href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q)+'">Abrir Google Maps</a></div>';
+    return;
+  }
+  if(miniMap){ try{ miniMap.remove(); }catch(e){} miniMap=null; miniPin=null; }
+  el.innerHTML='';
+  miniMap=L.map(el).setView([lat,lng],19);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Esri'}).addTo(miniMap);
+  colocarPino(lat,lng);
+  miniMap.on('click',e=>{
+    ptsMapa.push(e.latlng);
+    L.circleMarker(e.latlng,{radius:5,color:modoMapa==='obra'?'#001F5B':'#E62117',fillColor:modoMapa==='obra'?'#001F5B':'#E62117',fillOpacity:1}).addTo(miniMap);
+  });
+  setTimeout(()=>miniMap.invalidateSize(),300);
+  geocodeLatLng(q);
+}
+async function geocodeLatLng(q){
+  const set=(lat,lng)=>{
+    const a=document.getElementById('mapLat'), b=document.getElementById('mapLng');
+    if(a) a.value=(+lat).toFixed(6);
+    if(b) b.value=(+lng).toFixed(6);
+    if(miniMap) colocarPino(lat,lng);
+  };
+  try{
+    const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q='+encodeURIComponent(q));
+    const d=await r.json();
+    if(d[0]){set(d[0].lat,d[0].lon);return;}
+  }catch(e){}
+  const cid=(document.getElementById('obraCid').value+' '+document.getElementById('obraUf').value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
+  const fb={'LONDRINA PR':[-23.3105,-51.1628],'PORTO BELO SC':[-27.1578,-48.5986],'CURITIBA PR':[-25.4284,-49.2733],'SAO PAULO SP':[-23.5505,-46.6333]};
+  const p=fb[cid]||[-23.3105,-51.1628];
+  set(p[0],p[1]);
+}
+function corrigirLoteAzul(){
+  if(!miniMap){alert('Abra o mapa primeiro.');return;}
+  if(ultimoAzul && ultimoAzul.poly){
+    try{ miniMap.removeLayer(ultimoAzul.poly); }catch(e){}
+    ptsMapa=ultimoAzul.pts.slice();
+    modoMapa='obra';
+    if(nObra>0) nObra--;
+    ultimoAzul=null;
+    alert('Terreno azul apagado. Toque os cantos de novo e toque Fechar terreno.');
+    return;
+  }
+  modoMapa='obra';
+  ptsMapa=[];
+  alert('Modo correção: Obra azul. Redesenhe os cantos e feche o terreno.');
+}
+function fecharLote(){
+  if(ptsMapa.length<3){alert('Toque pelo menos 3 cantos no mapa.');return;}
+  const nome=prompt('Nome do terreno:')||'Terreno';
+  const color=modoMapa==='obra'?'#1a4a9c':'#E62117';
+  const poly=L.polygon(ptsMapa,{color,weight:2,fillOpacity:.3}).addTo(miniMap);
+  if(modoMapa==='obra') ultimoAzul={poly,pts:ptsMapa.slice()};
+  const n=modoMapa==='obra'?++nObra:++nVis;
+  const c=poly.getBounds().getCenter();
+  L.marker(c,{icon:L.divIcon({className:'',html:'<div style="background:#fff;border:2px solid '+color+';padding:2px 6px;border-radius:8px;font:800 11px sans-serif">'+n+' — '+nome+'</div>'})}).addTo(miniMap);
+  const list=JSON.parse(localStorage.getItem('vickz_lotes')||'[]');
+  list.push({tipo:modoMapa,nome,n});
+  localStorage.setItem('vickz_lotes',JSON.stringify(list));
+  ptsMapa=[];
+}
+function salvarAnexo1(){}
+function salvarObra(){
+  const a=[];
+  ['obraConst','obraVist','obraVistCrea'].forEach(id=>{const v=document.getElementById(id).value;if(v)a.push(v);});
+  localStorage.setItem('vickz_obra',JSON.stringify({nome:obraNome.value,end:obraEnd.value}));
+}
+function syncDash(){
+  document.getElementById('kImo').textContent=imoveis.length;
+  document.getElementById('kLin').textContent=imoveis.length;
+  document.getElementById('kVis').textContent=imoveis.filter(i=>i.ok).length;
+  document.getElementById('kLau').textContent=imoveis.filter(i=>i.ok).length;
+  const bits=[];
+  if(logoPrev.textContent) bits.push(logoPrev.textContent);
+  if(matList.textContent) bits.push('Matrículas: '+matList.textContent);
+  if(projList.textContent) bits.push('Projeto: '+projList.textContent);
+  anexo2lista.textContent=bits.join(' · ')||'Ainda sem anexos.';
+}
+function lerLotes(){
+  const list=JSON.parse(localStorage.getItem('vickz_lotes')||'[]');
+  const box=document.getElementById('loteResumo');
+  if(!list.length){box.innerHTML='<div class="sub">Nenhum lote salvo. Abra o mapa interativo.</div>';return;}
+  box.innerHTML=list.map((l,i)=>`<div class="mod"><span class="badge">${i+1}</span><div><b>${l.nome}</b><div class="sub">${l.tipo}</div></div></div>`).join('');
+}
+function renderViz(){
+  document.getElementById('vizLista').innerHTML=imoveis.map((im,i)=>`<div class="box"><div class="row"><span class="badge">${i+1}</span><b>${im.nome}</b><span class="pill">${im.ok?'Vistoriado':'Pendente'}</span></div>
+  <label>Proprietário</label><div class="inp"><input value="${im.nome}" onchange="imoveis[${i}].nome=this.value"/></div>
+  <label>Endereço</label><div class="inp"><input value="${im.end}" onchange="imoveis[${i}].end=this.value"/></div></div>`).join('');
+}
+function addImovel(){imoveis.push({nome:'Novo imóvel '+(imoveis.length+1),end:'',ok:false});renderViz();syncDash();}
+function abrirPrimeiro(){
+  const p=imoveis.findIndex(i=>!i.ok);
+  idx=p<0?0:p;
+  preencherA1();
+  go('anexo1');
+}
+function preencherA1(){
+  const im=imoveis[idx];
+  a1tit.textContent='Imóvel '+(idx+1);
+  a1sub.textContent=im.nome+' — '+im.end;
+  a1end.value=im.end;
+  a1decl.value=im.nome;
+  a1obra.value=document.getElementById('obraNome').value;
+  a1prof.value=document.getElementById('profNome').value||document.getElementById('obraVist').value;
+  a1crea.value=document.getElementById('profCrea').value||document.getElementById('obraVistCrea').value;
+  a1mun.value=document.getElementById('obraCid').value;
+  a1uf.value=document.getElementById('obraUf').value;
+  a1cep.value=document.getElementById('obraCep').value;
+}
+function fachada(inp){
+  const f=inp.files[0]; if(!f) return;
+  const err=validarUpload(f,'foto');
+  if(err){ alert(err); inp.value=''; return; }
+  const url=URL.createObjectURL(f);
+  imoveis[idx].fachada=url;
+  fachPrev.innerHTML='<img src="'+url+'" style="width:100%;border-radius:10px;margin-top:8px"/> <div class="files">Fachada capturada agora — use Corrigir se precisar.</div>';
+}
+function passoFoto(n){
+  const tem=fotoAtual>=0;
+  amb.disabled=!tem; pat.disabled=!tem;
+  const liberaMarca=tem && (amb.value||'').trim().length>0;
+  const bs=document.getElementById('btnSeta'), bq=document.getElementById('btnQuad');
+  if(bs) bs.disabled=!liberaMarca;
+  if(bq) bq.disabled=!liberaMarca;
+}
+function pintarGal(){
+  gal.innerHTML=fotos.map((p,i)=>{
+    if(i===fotoAtual) return '';
+    return `<div class="box" onclick="selecionarFoto(${i})">
+      <img src="${p.marked||p.url}" style="width:100%;border-radius:8px;margin-bottom:6px"/>
+      <b>Outra foto ${i+1}. ${p.amb||''}</b></div>`;
+  }).join('');
+}
+function selecionarFoto(i){
+  fotoAtual=i; mkPts=[];
+  amb.value=fotos[i].amb||'';
+  pat.value=fotos[i].pat||'';
+  abrirEditor(fotos[i].marked||fotos[i].url);
+  document.getElementById('mkHint').textContent='Foto '+(i+1)+' no editor. Confira o ambiente; depois seta ou quadrado.';
+  pintarGal();
+  passoFoto();
+}
+function armarMarca(t){
+  if(fotoAtual<0){ alert('Tire a foto primeiro.'); return; }
+  if(!(amb.value||'').trim()){ alert('Preencha o ambiente antes de marcar a patologia.'); return; }
+  tipoMk=t; mkPts=[];
+  document.getElementById('mkHint').textContent= t==='quad'
+    ? 'Toque dois cantos na foto para o quadrado.'
+    : 'Toque o início e a ponta da seta na foto.';
+}
+function abrirEditor(url){
+  const box=document.getElementById('editorFoto');
+  const img=document.getElementById('fotoEdit');
+  const cv=document.getElementById('cvMk');
+  box.style.display='block';
+  mkPts=[];
+  function encaixar(){
+    const w=img.clientWidth||box.clientWidth||320;
+    const h=img.clientHeight||Math.round(w*0.75);
+    cv.width=w; cv.height=h;
+    cv.style.width=w+'px'; cv.style.height=h+'px';
+    const x=cv.getContext('2d');
+    x.clearRect(0,0,w,h);
+    if(img.naturalWidth) x.drawImage(img,0,0,w,h);
+    cv.onpointerdown=marcarNaFoto;
+  }
+  img.onload=encaixar;
+  img.src=url;
+  if(img.complete) setTimeout(encaixar,80);
+}
+let lastAdd=0, lastFotoKey='';
+function addFoto(inp){
+  const f=inp.files[0]; if(!f) return;
+  const err=validarUpload(f,'foto');
+  if(err){ alert(err); inp.value=''; return; }
+  const key=f.name+'|'+f.size+'|'+f.lastModified;
+  const agora=Date.now();
+  if(key===lastFotoKey || agora-lastAdd<1000){ inp.value=''; return; }
+  lastFotoKey=key; lastAdd=agora;
+  const url=URL.createObjectURL(f);
+  fotos.unshift({amb:'',pat:'',nome:f.name,url,marked:url});
+  fotoAtual=0;
+  amb.value=''; pat.value='';
+  inp.value='';
+  document.getElementById('mkHint').textContent='Foto ok. Agora preencha o ambiente. Só então a seta/quadrado liberam.';
+  abrirEditor(url);
+  pintarGal();
+  passoFoto();
+}
+function gravaTextoFoto(){
+  if(fotoAtual<0 || !fotos[fotoAtual]) return;
+  fotos[fotoAtual].amb=amb.value;
+  fotos[fotoAtual].pat=pat.value;
+  passoFoto();
+}
+function posCv(e,cv){
+  const r=cv.getBoundingClientRect();
+  const p=e.touches?e.touches[0]:e;
+  return [((p.clientX-r.left)/r.width)*cv.width,((p.clientY-r.top)/r.height)*cv.height];
+}
+function setaVermelha(x,a,b){
+  x.strokeStyle='#E62117'; x.fillStyle='#E62117'; x.lineWidth=Math.max(3,x.canvas.width/180); x.lineCap='round';
+  x.beginPath(); x.moveTo(a[0],a[1]); x.lineTo(b[0],b[1]); x.stroke();
+  const ang=Math.atan2(b[1]-a[1],b[0]-a[0]); const L=Math.max(14,x.canvas.width/28);
+  x.beginPath(); x.moveTo(b[0],b[1]);
+  x.lineTo(b[0]-L*Math.cos(ang-0.4), b[1]-L*Math.sin(ang-0.4));
+  x.lineTo(b[0]-L*Math.cos(ang+0.4), b[1]-L*Math.sin(ang+0.4));
+  x.closePath(); x.fill();
+}
+function quadVermelho(x,a,b){
+  x.strokeStyle='#E62117'; x.lineWidth=Math.max(3,x.canvas.width/180);
+  x.strokeRect(Math.min(a[0],b[0]),Math.min(a[1],b[1]),Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]));
+}
+function marcarNaFoto(ev){
+  ev.preventDefault();
+  const cv=document.getElementById('cvMk');
+  const img=document.getElementById('fotoEdit');
+  if(fotoAtual<0) return;
+  mkPts.push(posCv(ev,cv));
+  const x=cv.getContext('2d');
+  x.clearRect(0,0,cv.width,cv.height);
+  x.drawImage(img,0,0,cv.width,cv.height);
+  if(mkPts.length===1){
+    x.fillStyle='#E62117'; x.beginPath(); x.arc(mkPts[0][0],mkPts[0][1],8,0,6.28); x.fill();
+    return;
+  }
+  if(tipoMk==='quad') quadVermelho(x,mkPts[0],mkPts[1]);
+  else setaVermelha(x,mkPts[0],mkPts[1]);
+  fotos[fotoAtual].marked=cv.toDataURL('image/jpeg',0.85);
+  pintarGal();
+  mkPts=[];
+  document.getElementById('mkHint').textContent='Marcação incluída. Pode corrigir escolhendo Seta/Quadrado de novo.';
+}
+function renderTermo(){
+  termoPrev.innerHTML=`<div style="text-align:center"><img src="vickz_logo.png" style="height:48px"/><br><b>TERMO DE CIÊNCIA, CONCORDÂNCIA E DECLARAÇÃO DE VERACIDADE</b><div class="sub">Vistoria Cautelar de Imóvel</div></div>
+  <p><b>1. IDENTIFICAÇÃO DA VISTORIA</b><br>
+  Nº ${a1ref.value||'—'} · ${a1data.value||'—'} ${a1hora.value||''}<br>
+  Endereço: ${a1end.value} ${a1comp.value}<br>
+  ${a1mun.value} / ${a1uf.value} / ${a1cep.value}<br>
+  Obra: ${a1obra.value}<br>
+  Profissional: ${a1prof.value} · ${a1crea.value}</p>
+  <p><b>2. IDENTIFICAÇÃO DO DECLARANTE</b><br>
+  ${a1decl.value} · ${a1cpf.value} · ${a1rg.value}<br>
+  Qualidade: ${a1qual.value} · ${a1tel.value}</p>
+  <p><b>3. DECLARAÇÃO</b><br>
+  3.1 Estive presente (ou tomei ciência) durante a vistoria e acompanhei os registros fotográficos.<br>
+  3.2 Fotografias e descrições correspondem à realidade do imóvel na data da inspeção.<br>
+  3.3 Não há omissão dolosa, distorção ou edição enganosa.<br>
+  3.4 Tive oportunidade de apontar ressalvas.<br>
+  3.5 Terei acesso à via digital do relatório.<br>
+  3.6 Autorizo o uso das imagens para a vistoria cautelar, nos termos da LGPD.</p>
+  <label>4. Ressalvas</label>
+  <textarea id="a1ress" placeholder="Sem ressalvas ou descreva aqui."></textarea>
+  <p class="sub">5. Encerramento — assine abaixo. Testemunhas opcionais no laudo.</p>`;
+}
+function bindSig(id){
+  const c=document.getElementById(id); if(!c) return;
+  const x=c.getContext('2d'); let on=false;
+  function pos(e){const r=c.getBoundingClientRect();const p=e.touches?e.touches[0]:e;return[(p.clientX-r.left)*c.width/r.width,(p.clientY-r.top)*c.height/r.height];}
+  c.addEventListener('pointerdown',e=>{on=true;c.setPointerCapture(e.pointerId);const[a,b]=pos(e);x.beginPath();x.moveTo(a,b);});
+  c.addEventListener('pointermove',e=>{if(!on)return;const[a,b]=pos(e);x.lineTo(a,b);x.strokeStyle='#001F5B';x.lineWidth=2;x.stroke();});
+  c.addEventListener('pointerup',()=>on=false);
+}
+bindSig('sig1'); bindSig('sig2');
+function limparSig(id){const c=document.getElementById(id||'sig1');c.getContext('2d').clearRect(0,0,c.width,c.height);}
+function canvasVazio(id){
+  const c=document.getElementById(id); if(!c) return true;
+  const d=c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+  for(let i=3;i<d.length;i+=4) if(d[i]>10) return false;
+  return true;
+}
+function fecharImovel(){
+  if(canvasVazio('sig1')){alert('O declarante precisa assinar na tela antes de fechar.');return;}
+  const c=document.getElementById('sig1');
+  const c2=document.getElementById('sig2');
+  imoveis[idx].ok=true;
+  imoveis[idx].fotos=fotos.slice();
+  imoveis[idx].sig=c.toDataURL();
+  imoveis[idx].sigProf=c2&&!canvasVazio('sig2')?c2.toDataURL():'';
+  imoveis[idx].a1={ref:a1ref.value,data:a1data.value,hora:a1hora.value,end:a1end.value,decl:a1decl.value,cpf:a1cpf.value};
+  fotos=[]; gal.innerHTML=''; document.getElementById('editorFoto').style.display='none';
+  const next=imoveis.findIndex(i=>!i.ok);
+  if(next>=0){idx=next;preencherA1();alert('Imóvel salvo. Agora o imóvel '+(idx+1)+'.');go('anexo1');}
+  else {
+    go('laudo');
+    renderLaudo();
+    setTimeout(()=>abrirRelatorio(imoveis.map((_,i)=>packImovel(i)),'Laudo-VICKZ-integral','pdf'),400);
+  }
+  syncDash();
+}
+function loadImg(src){
+  return new Promise(res=>{
+    if(!src){res(null);return;}
+    const im=new Image();
+    im.onload=()=>res(im);
+    im.onerror=()=>res(null);
+    im.src=src;
+  });
+}
+async function pdfImoveis(lista,nomeArq){
+  if(!window.jspdf){alert('jsPDF não carregou. Precisa de internet uma vez.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:'mm',format:'a4'});
+  const logo=await loadImg('vickz_logo.png');
+  for(let n=0;n<lista.length;n++){
+    const im=lista[n];
+    if(n>0) doc.addPage();
+    if(logo) doc.addImage(logo,'PNG',15,10,22,22);
+    doc.setFontSize(14); doc.setTextColor(0,31,91);
+    doc.text('VICKZ — Relatório de vistoria cautelar',40,18);
+    doc.setFontSize(9); doc.text('NBR 13752:2024 item 7.3.3.2 — constatação. Sem nexo causal.',40,24);
+    doc.setFontSize(11);
+    let y=38;
+    doc.text('Imóvel: '+(im.nome||''),15,y); y+=6;
+    doc.text('Endereço: '+(im.end||''),15,y); y+=6;
+    const a1=im.a1||{};
+    doc.text('Ref. '+(a1.ref||'—')+'  Data '+(a1.data||'—')+'  '+ (a1.hora||''),15,y); y+=6;
+    doc.text('Declarante: '+(a1.decl||im.nome||''),15,y); y+=8;
+    if(im.fachada){
+      const fh=await loadImg(im.fachada);
+      if(fh){ const w=180,h=Math.min(70,180*fh.height/fh.width); doc.addImage(fh,'JPEG',15,y,w,h); y+=h+6; doc.text('Foto da fachada',15,y); y+=8; }
+    }
+    const fs=im.fotos||[];
+    for(const f of fs){
+      if(y>240){doc.addPage(); y=20;}
+      const pic=await loadImg(f.marked||f.url);
+      if(pic){ const w=180,h=Math.min(80,180*pic.height/pic.width); doc.addImage(pic,'JPEG',15,y,w,h); y+=h+5; }
+      doc.setFontSize(10);
+      doc.text((f.amb||'')+' — '+(f.pat||'sem patologia'),15,y); y+=10;
+    }
+    if(im.sig){
+      if(y>250){doc.addPage(); y=20;}
+      doc.text('Assinatura do declarante / acompanhante',15,y); y+=4;
+      const sg=await loadImg(im.sig);
+      if(sg){ doc.addImage(sg,'PNG',15,y,80,28); }
+    }
+  }
+  doc.save(nomeArq);
+}
+function v(id){const e=document.getElementById(id); return e?(e.value||e.textContent||'').trim():'';}
+function snapGeral(){
+  return {
+    prof:v('visNome')||v('profNome')||v('obraVist'),
+    crea:v('visCrea')||v('obraVistCrea'),
+    conselho:v('visCons'),
+    obra:v('obraNome'),
+    rua:v('obraEnd'), num:v('obraNum'), comp:v('obraComp'), bairro:v('obraBairro'),
+    cid:v('obraCid'), uf:v('obraUf'), cep:v('obraCep'),
+    const:v('obraConst'),
+    lat:v('mapLat'), lng:v('mapLng'),
+    mat:v('matList'), proj:v('projList'),
+    lotes:JSON.parse(localStorage.getItem('vickz_lotes')||'[]'),
+    ress:(document.getElementById('a1ress')||{}).value||''
+  };
+}
+function packImovel(i){
+  const im=Object.assign({},imoveis[i]);
+  if(i===idx || !im.fotos || !im.fotos.length){
+    if(fotos.length) im.fotos=fotos.slice();
+  }
+  const c=document.getElementById('sig1'), c2=document.getElementById('sig2');
+  if(c) try{ im.sig=c.toDataURL(); }catch(e){}
+  if(c2) try{ im.sigProf=c2.toDataURL(); }catch(e){}
+  im.fachada=im.fachada||imoveis[i].fachada||'';
+  im.a1={
+    ref:v('a1ref'), data:v('a1data'), hora:v('a1hora'),
+    end:v('a1end')||im.end, comp:v('a1comp'),
+    mun:v('a1mun'), uf:v('a1uf'), cep:v('a1cep'),
+    obra:v('a1obra'), prof:v('a1prof'), crea:v('a1crea'),
+    decl:v('a1decl')||im.nome, cpf:v('a1cpf'), rg:v('a1rg'),
+    qual:v('a1qual'), proc:v('a1proc'), tel:v('a1tel')
+  };
+  return im;
+}
+function fig(src,leg,n,ano){
+  if(!src) return `<p><i>[inserir foto]</i></p><p>Figura ${n} - ${leg}<br>Fonte: Autor, ${ano}.</p>`;
+  return `<p><img src="${src}" style="max-width:100%;max-height:400px"/></p><p>Figura ${n} - ${leg}<br>Fonte: Autor, ${ano}.</p>`;
+}
+function htmlPrint(lista,titulo){
+  const g=snapGeral();
+  const dt=new Date();
+  const MESES=['JANEIRO','FEVEREIRO','MARÇO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+  const ano=dt.getFullYear(), mes=MESES[dt.getMonth()];
+  const dataBR=dt.toLocaleDateString('pt-BR');
+  const dataExt=dt.getDate()+' de '+mes.toLowerCase()+' de '+ano;
+  const endObra=[g.rua,g.num,g.comp,g.bairro,g.cid,g.uf,g.cep].filter(Boolean).join(', ');
+  const vol='01/0'+Math.max(lista.length,1);
+  const blocos=lista.map((im,ix)=>{
+    const a1=im.a1||{};
+    const endViz=a1.end||im.end||'';
+    const decl=a1.decl||im.nome||'';
+    const fs=im.fotos||[];
+    const fach=im.fachada||(fs[0]&&(fs[0].marked||fs[0].url))||'';
+    let n=1;
+    const ficha=`
+      <p style="text-align:center"><img src="vickz_logo.png" style="height:52px"/><br>Engenharia</p>
+      <p style="text-align:center">Incorporadora — ${g.const||'—'}</p>
+      <h1 style="text-align:center">LAUDO DE VISTORIA CAUTELAR DE VIZINHANÇA</h1>
+      <p><b>CONTRATANTE:</b> ${g.const||'—'}<br>
+      <b>EMPREENDIMENTO:</b> ${g.obra||'—'}<br>
+      <b>ENDEREÇO EMPREENDIMENTO:</b> ${endObra||'—'}<br>
+      <b>EDIFICAÇÃO VISTORIADA:</b> ${endViz||'—'}<br>
+      <b>RESPONSÁVEL TÉCNICO:</b> ${g.prof||'—'}<br>
+      <b>VOLUME:</b> ${vol.replace('0'+Math.max(lista.length,1), String(ix+1).padStart(2,'0')+'/'+String(lista.length).padStart(2,'0'))}</p>
+      ${fig(fach,'Foto da edificação vistoriada',n++,ano)}
+      <p style="text-align:center"><b>${mes} DE ${ano}</b></p>
+      <h2>Sumário</h2>
+      <p>1 – Apresentação<br>2 – Objetivos<br>3 – Dados Técnicos<br>4 – Considerações preliminares<br>5 – Foto aérea<br>6 – Caracterização do Terreno<br>7 – Fachadas<br>8 – Área externa<br>9 – Área Interna<br>10 – Recomendações<br>11 – Considerações finais<br>12 – Anexo 01 – Planilha de patologias<br>13 – Anexo 02 – Autorização e acompanhamento da vistoria<br>14 – Anexo 03 – Conversas<br>15 – Anexo 04 – Anotação de Responsabilidade Técnica - ART</p>
+      <h2>Lista de Ilustrações</h2>
+      <p>Atualize esta lista automaticamente pelo Word (Referências &gt; Inserir Legenda / Índice de Ilustrações) após inserir as fotos definitivas.</p>
+      <h2>1 – Apresentação</h2>
+      <p>A vistoria cautelar é a constatação das condições de uma edificação, mediante verificação "in loco", com registros fotográficos e descrição técnica das edificações lindeiras ao terreno do novo empreendimento. Tem como objetivo resguardar o cliente com base em prova documental, de futuros problemas com a vizinhança.</p>
+      <p>Toda obra de construção civil deve estar precavida em relação aos imóveis vizinhos. Na hipótese de ocorrência de danos, com base no laudo elaborado, verifica-se se existe responsabilidade da construtora, comprovando ou não a preexistência de anomalias nas edificações vistoriadas.</p>
+      <p>Caso seja comprovado pelos registros do laudo que as patologias foram causadas em decorrência da execução da obra, cabe ao construtor sanar o problema, de preferência amigavelmente, para manter um bom relacionamento com a vizinhança.</p>
+      <p>O estudo apresentado é baseado na análise dos dados coletados, resultando na identificação do estado do imóvel até o presente momento. O laudo atua tanto na esfera judicial quanto na extrajudicial, contribuindo para apaziguar desentendimentos e identificar a responsabilidade das partes.</p>
+      <h2>2 – Objetivos</h2>
+      <h3>2.1 – Objetivo Geral</h3>
+      <p>Este laudo tem como objetivo principal uma análise detalhada de possíveis patologias existentes na edificação residencial/comercial situada do futuro empreendimento ${g.obra||'—'}, localizado em ${endObra||'—'}.</p>
+      <h3>2.2 – Objetivos Específicos</h3>
+      <ul><li>Comunicação ao proprietário da edificação lindeira ao futuro empreendimento sobre a vistoria a ser elaborada;</li>
+      <li>Elaboração de relatório fotográfico da edificação;</li>
+      <li>Apontar as patologias existentes.</li></ul>
+      <h2>3 – Dados Técnicos</h2>
+      <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <tr><td><b>Parâmetro</b></td><td><b>Descrição</b></td></tr>
+        <tr><td>Contratante</td><td>${g.const||'—'}</td></tr>
+        <tr><td>Data da vistoria</td><td>${a1.data||dataBR}</td></tr>
+        <tr><td>Endereço</td><td>${endViz||'—'}</td></tr>
+        <tr><td>Bairro</td><td>${g.bairro||'—'}</td></tr>
+        <tr><td>Cidade</td><td>${(a1.mun||g.cid)||'—'} / ${(a1.uf||g.uf)||''}</td></tr>
+        <tr><td>Tipo de ocupação</td><td>—</td></tr>
+        <tr><td>Número de pavimentos</td><td>—</td></tr>
+        <tr><td>Idade aparente</td><td>—</td></tr>
+        <tr><td>Estado da edificação</td><td>—</td></tr>
+        <tr><td>Responsável técnico</td><td>${g.prof||'—'} ${g.crea||''}</td></tr>
+      </table>
+      <h2>4 – Considerações preliminares</h2>
+      <p>A edificação é composta por pavimento(s), sendo a estrutura, paredes de vedação e argamassa com pintura conforme verificado in loco.</p>
+      <p>Com a vistoria realizada na residência em estudo, foi possível perceber o estado geral registrado nas fotografias. O imóvel encontra-se nas condições descritas neste laudo e na planilha de patologias.</p>
+      <p>A vistoria técnica foi realizada no dia ${a1.data||dataExt}, pelo(a) ${g.prof||'—'}, acompanhado(a) pelo(a) Sr(a). ${decl||'—'}, que se identificou como ${a1.qual||'responsável'} do imóvel.</p>
+      <p>Para facilitar a visualização e noção de grandeza das anomalias nas imagens, foram utilizadas setas vermelhas, conforme figura abaixo. Além disso, serão anexadas ao laudo planilhas de referência das patologias, para auxiliar na busca.</p>
+      <p>➔</p>
+      <p>Figura ${n++} - Sinalizador de patologia.<br>Fonte: Autor, ${ano}.</p>
+      <p>Fissuras, trincas e rachaduras são manifestações patológicas das edificações observadas em alvenarias, vigas, pilares, lajes, pisos, entre outros elementos. As aberturas das patologias foram consideradas conforme a tabela abaixo:</p>
+      <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <tr><td><b>Patologia</b></td><td><b>Abertura (mm)</b></td></tr>
+        <tr><td>Fissura</td><td>Até 0,5</td></tr>
+        <tr><td>Trinca</td><td>De 0,5 a 1,5</td></tr>
+        <tr><td>Rachadura</td><td>De 1,5 a 5</td></tr>
+        <tr><td>Fenda</td><td>De 5 a 10</td></tr>
+        <tr><td>Brecha</td><td>Acima de 10</td></tr>
+      </table>
+      <p>Fonte: NBR 9575.</p>
+      <h2>5 – Foto aérea</h2>
+      <p>Na foto abaixo, identifica-se em vermelho a edificação vistoriada e em azul o terreno onde será construído o futuro empreendimento ${g.obra||'—'}.</p>
+      <p>Coordenadas do empreendimento: ${g.lat||'—'}, ${g.lng||'—'}.</p>
+      ${fig(fach,'Locação aérea do imóvel',n++,ano)}
+      <h2>6 – Caracterização do Terreno</h2>
+      <p>Trata-se do terreno do empreendimento ${g.obra||'—'}, ${endObra}, matrícula(s): ${g.mat||'—'}.</p>
+      <p>Seguem abaixo imagens do terreno onde será implantado o referido empreendimento.</p>
+      ${fig(fach,'Localização do terreno do futuro empreendimento.',n++,ano)}
+      ${fig(fach,'Vista geral do futuro empreendimento.',n++,ano)}
+      <h2>7 – Fachadas</h2>
+      <p>O objetivo da vistoria externa é apontar as patologias encontradas nas fachadas da edificação vistoriada e muros de divisa.</p>
+      ${fig(fach,'Vista geral, fachada.',n++,ano)}
+      <h2>8 – Área externa</h2>
+      <p>O objetivo da vistoria externa é apontar as patologias encontradas nos muros de divisa, calçadas e circulação externa da edificação vistoriada.</p>
+      ${fs.filter(f=>/extern|muro|calcad|fachad|telhad/i.test((f.amb||'')+' '+(f.pat||''))).map(f=>fig(f.marked||f.url,'Vista geral, área externa, '+(f.amb||'')+(f.pat?'; patologia: '+f.pat:''),n++,ano)).join('')
+        || fig(fs[0]&&(fs[0].marked||fs[0].url),'Vista geral, área externa.',n++,ano)}
+      <h2>9 – Área Interna</h2>
+      <p>O objetivo da vistoria interna é apontar as patologias encontradas nos cômodos da edificação vistoriada.</p>
+      ${fs.map(f=>fig(f.marked||f.url,'Área interna, '+(f.amb||'cômodo')+(f.pat?', patologia '+f.pat:''),n++,ano)).join('')||'<p>Sem registro interno nesta sessão.</p>'}
+      <h2>10 – Recomendações</h2>
+      <p>Conforme se infere do arquivo fotográfico realizado na data da vistoria, recomenda-se que o imóvel seja objeto de análise e monitoramento, a critério do corpo técnico da obra ou em caso de necessidade, para direcionamento e determinação das condições de tomada de providências técnicas e preventivas.</p>
+      <h2>11 – Considerações finais</h2>
+      <p>Este trabalho trata-se de um Laudo de Vistoria Cautelar de Vizinhança, o qual foi realizado na edificação situada junto ao futuro empreendimento, a ser executado pela ${g.const||'—' }.</p>
+      <p>A inspeção foi realizada pelo(a) ${g.prof||'—'}, contendo o presente volume.</p>
+      <p>Será fornecida ao contratante uma cópia do laudo, juntamente com os arquivos digitais contendo o laudo em PDF e todas as imagens registradas na vistoria, que servem como documento comprobatório do estado da edificação vistoriada antes do início do futuro empreendimento.</p>
+      <p>${g.cid||'—'}, ${dataExt}.</p>
+      <p>Doc. assinado digitalmente.</p>
+      ${im.sigProf?`<p><img src="${im.sigProf}" style="max-width:220px"/></p>`:''}
+      <p><b>${g.prof||'—'}</b><br>${g.conselho||'CREA/CAU'} ${g.crea||''}</p>
+      ${im.sig?`<p>Acompanhante / declarante: ${decl}<br><img src="${im.sig}" style="max-width:220px"/></p>`:''}
+      <h2>12 – Anexo 01 – Planilha de patologias</h2>
+      <table border="1" cellpadding="6" cellspacing="0" width="100%">
+        <tr><td><b>Nº</b></td><td><b>Ambiente</b></td><td><b>Tipo de Patologia</b></td></tr>
+        ${fs.filter(f=>f.pat).map((f,i)=>`<tr><td>${i+1}</td><td>${f.amb||''}</td><td>${f.pat}</td></tr>`).join('')
+          || '<tr><td>—</td><td>—</td><td>Nenhuma patologia descrita nesta sessão.</td></tr>'}
+      </table>
+      <p>Referência de tipos (modelo): Abertura entre parede e pilar; Diversas fissuras; Trinca no pilar; Microfissuras; Abertura entre paredes; Fissura; Piso cedendo; Rachadura; Trincas; Revestimento cerâmico solto; Piso quebrado; Pintura desbotando; Falta de impermeabilização; Piso trincado; Infiltração; Rejunte solto; Ferrugem no piso; Parede perfurada; Desagregação; Eflorescência; Saponificação; Mofo; Furo na parede; Batente perfurado/trincado; Falta de vedação em calha.</p>
+      <h2>13 – Anexo 02 – Autorização e acompanhamento da vistoria</h2>
+      <p>Contratante: ${g.const||'—'} · Empreendimento: ${g.obra||'—'} · Edificação vistoriada: ${endViz||'—'} · Vistoriador: ${g.prof||'—'} · Acompanhado por: ${decl||'—'} · Local e data: ${g.cid||''}, ${a1.data||dataBR}.</p>
+      ${im.sig||im.sigProf?`<p>${im.sig?`<img src="${im.sig}" style="max-width:200px"/> `:''}${im.sigProf?`<img src="${im.sigProf}" style="max-width:200px"/>`:''}</p>`:''}
+      <h2>14 – Anexo 03 – Conversas</h2>
+      <p>${v('convList')||'Inserir prints das conversas (WhatsApp/e-mail) de agendamento anexados no app.'}</p>
+      <h2>15 – Anexo 04 – Anotação de Responsabilidade Técnica - ART</h2>
+      <p>${v('artList')||'Inserir a ART/RRT digital do serviço, quitada e vinculada ao CREA/CAU do responsável técnico.'}</p>
+    `;
+    return `<article style="page-break-after:always">${ficha}</article>`;
+  }).join('');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"/><title>${titulo}</title>
+  <style>body{font-family:Segoe UI,sans-serif;color:#001F5B;max-width:800px;margin:24px auto;line-height:1.45}
+  img.logo{height:56px} h1,h2,h3{color:#001F5B} @media print { .noprint{display:none} }</style></head><body>
+  ${blocos}
+  <p class="noprint"><button onclick="window.print()">Imprimir / salvar PDF</button></p>
+  </body></html>`;
+}
+function baixarWord(html,nome){
+  const blob=new Blob(['\ufeff'+html],{type:'application/msword'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=nome.endsWith('.doc')?nome:nome+'.doc';
+  a.click();
+}
+function abrirRelatorio(lista,titulo,fmt){
+  const html=htmlPrint(lista,titulo);
+  const nome=(titulo||'Laudo-VICKZ').replace(/\s+/g,'-');
+  if(fmt==='word') baixarWord(html,nome+'.doc');
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  let w=null;
+  try{ w=window.open(url,'_blank'); }catch(e){ w=null; }
+  if(!w){
+    const a=document.createElement('a');
+    a.href=url; a.download=nome+'.html'; a.target='_blank';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+}
+function relatorioIntegral(fmt){
+  abrirRelatorio(imoveis.map((_,i)=>packImovel(i)),'Relatorio-integral-VICKZ',fmt||'pdf');
+}
+function relatorioImovel(i,fmt){
+  abrirRelatorio([packImovel(i)],'Relatorio-VICKZ-imovel-'+(i+1),fmt||'pdf');
+}
+function payloadGrok(){
+  return {
+    geral: snapGeral(),
+    imovel: packImovel(idx),
+    imoveis: imoveis.map((_,i)=>packImovel(i))
+  };
+}
+async function enviarGrok(){
+  const st=document.getElementById('grokStatus');
+  st.textContent='Enviando ao backend...';
+  try{
+    const r=await fetch('http://localhost:3001/api/laudo',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payloadGrok())
+    });
+    const j=await r.json();
+    if(!j.ok) throw new Error(j.erro||'falha');
+    st.textContent=j.usouGrok?'Laudo com texto Grok.':'Laudo no modelo (sem chave XAI).';
+    const w=window.open('','_blank');
+    if(w){ w.document.write(j.html); w.document.close(); }
+    else alert('Permita pop-up. Laudo gerado no backend.');
+  }catch(e){
+    st.textContent='Backend offline. Abrindo laudo local.';
+    abrirRelatorio(imoveis.map((_,i)=>packImovel(i)),'Laudo-VICKZ-integral','pdf');
+  }
+}
+function renderLaudo(){
+  laudoLista.innerHTML=imoveis.map((im,i)=>`<div class="box"><div class="row"><span class="badge">${i+1}</span><b>${im.nome}</b><span class="pill">${im.ok?'Pronto':'Pendente'}</span></div>
+  <div class="sub">${im.end}</div>
+  <button class="btn" type="button" onclick="relatorioImovel(${i},'pdf')">PDF deste imóvel</button>
+  <button class="btn navy" type="button" onclick="relatorioImovel(${i},'word')">Word deste imóvel</button>
+  <button class="btn ghost" type="button" onclick="idx=${i};preencherA1();go('anexo1')">Reabrir vistoria</button></div>`).join('');
+}
+</script>
+</body>
+</html>
