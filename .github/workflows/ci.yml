@@ -18,7 +18,17 @@ jobs:
         run: |
           rm -rf node_modules
           npm install
-      - run: npx vitest run
+      - name: Testes + cobertura
+        run: npx vitest run --coverage
+      - name: Publicar resumo de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            coverage/coverage-summary.json
+            coverage/index.html
+          if-no-files-found: ignore
       - run: npx vite build
   html-producao:
     runs-on: ubuntu-latest
