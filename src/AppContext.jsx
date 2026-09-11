@@ -1,394 +1,186 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import {
+  htmlPrint,
+  baixarWord,
+  abrirRelatorio,
+  relatorioImovel,
+  relatorioIntegral,
+} from './utils/reportGenerator';
 
-/**
- * AppContext - Gerenciamento de estado global para VICKZ
- * Controla: dados de vistoria, fotos, propriedades, assinaturas, persistência
- */
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  // Estado principal do laudo
   const [laudoData, setLaudoData] = useState({
-    // Tela 06: Dados de Identificação
     reference: '',
     inspectionData: {
-      date: new Date().toISOString(),
-      time: '',
-      address: '',
-      complement: '',
-      municipality: '',
-      state: '',
-      cep: '',
+      date: new Date().toISOString().split('T')[0],
       declarantName: '',
-      declarantQuality: '',
-      cpfCnpj: '',
-      phone: '',
-      email: ''
+      address: '',
+      latitude: '',
+      longitude: '',
     },
-
-    // Tela 07: Fotos e Georreferenciamento
-    photos: [],
-    geoReferences: {
-      latitude: null,
-      longitude: null,
-      altitude: null
-    },
-
-    // Tela 08: Propriedades Lindeiras
     properties: [],
-
-    // Tela 09: Assinaturas e Declarações
     signatures: {
-      declarant: null,
-      professional: null,
-      witness: null
+      professional: '',
+      witness: '',
     },
-    declarations: {
-      warranty: false,
-      authenticity: false,
-      responsibility: false
+    geoReferences: {
+      latitude: '',
+      longitude: '',
     },
-    timestamp: null,
-    reportId: ''
   });
 
-  // Estado de carregamento
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentScreen, setCurrentScreen] = useState('identification');
+  const [reportValidation, setReportValidation] = useState({
+    hasProperties: false,
+    hasPhotos: false,
+    hasAddress: false,
+    hasSignature: false,
+  });
 
-  // Carregar dados do localStorage ao iniciar
-  useEffect(() => {
-    const savedData = localStorage.getItem('vickz_laudo_data');
-    if (savedData) {
-      try {
-        const parsed = JSON.parse(savedData);
-        setLaudoData(parsed);
-      } catch (err) {
-        console.error('Erro ao carregar dados salvos:', err);
-      }
-    }
-  }, []);
+  // Converte dados React para formato do gerador
+  const convertToGeneratorFormat = useCallback(() => {
+    const dataGeral = {
+      obra: laudoData.reference || 'Laudo de Vizinhança',
+      prof: laudoData.inspectionData.declarantName || 'Profissional Responsável',
+      data: laudoData.inspectionData.date || new Date().toISOString().split('T')[0],
+      rua: laudoData.inspectionData.address || 'Endereço não informado',
+      lat: laudoData.inspectionData.latitude || laudoData.geoReferences.latitude || '',
+      lng: laudoData.inspectionData.longitude || laudoData.geoReferences.longitude || '',
+      const: '',
+      crea: '',
+      mat: '',
+      convList: [],
+      artList: [],
+    };
 
-  // Salvar dados no localStorage automaticamente quando mudam
-  useEffect(() => {
-    localStorage.setItem('vickz_laudo_data', JSON.stringify(laudoData));
+    const imoveis = laudoData.properties.map((prop, idx) => ({
+      endereco: prop.address || `Propriedade ${idx + 1}`,
+      fotos: prop.photos || [],
+      sigProf: laudoData.signatures.professional || '',
+      sigTest: laudoData.signatures.witness || '',
+    }));
+
+    return { dataGeral, imoveis };
   }, [laudoData]);
 
-  /**
-   * Atualiza dados de identificação (Tela 06)
-   */
-  const updateInspectionData = useCallback((newData) => {
-    setLaudoData(prev => ({
-      ...prev,
-      inspectionData: {
-        ...prev.inspectionData,
-        ...newData
-      }
-    }));
-  }, []);
+  // Valida dados para exportação
+  const validateReportData = useCallback(() => {
+    const validation = {
+      hasProperties: laudoData.properties && laudoData.properties.length > 0,
+      hasPhotos: laudoData.properties?.some(p => p.photos && p.photos.length > 0) || false,
+      hasAddress: !!laudoData.inspectionData.address,
+      hasSignature: !!laudoData.signatures.professional,
+    };
+    setReportValidation(validation);
+    return validation.hasProperties && validation.hasPhotos && validation.hasAddress;
+  }, [laudoData]);
 
-  /**
-   * Adiciona foto com metadata
-   */
-  const addPhoto = useCallback((photo) => {
-    setLaudoData(prev => ({
-      ...prev,
-      photos: [...prev.photos, {
-        id: `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        timestamp: new Date().toISOString(),
-        ...photo
-      }]
-    }));
-  }, []);
+  // Exporta relatório de propriedade individual
+  const exportPropertyReport = useCallback((propertyIndex, format = 'pdf') => {
+    if (!validateReportData()) {
+      console.error('Dados insuficientes para gerar relatório');
+      return;
+    }
 
-  /**
-   * Remove foto por ID
-   */
-  const removePhoto = useCallback((photoId) => {
-    setLaudoData(prev => ({
-      ...prev,
-      photos: prev.photos.filter(p => p.id !== photoId)
-    }));
-  }, []);
+    const { dataGeral, imoveis } = convertToGeneratorFormat();
 
-  /**
-   * Atualiza foto (marca patologias, descrição, etc)
-   */
-  const updatePhoto = useCallback((photoId, updates) => {
-    setLaudoData(prev => ({
-      ...prev,
-      photos: prev.photos.map(p =>
-        p.id === photoId ? { ...p, ...updates } : p
-      )
-    }));
-  }, []);
+    if (propertyIndex < 0 || propertyIndex >= imoveis.length) {
+      console.error('Índice de propriedade inválido');
+      return;
+    }
 
-  /**
-   * Atualiza georreferenciamento
-   */
-  const updateGeoReferences = useCallback((geoData) => {
-    setLaudoData(prev => ({
-      ...prev,
-      geoReferences: {
-        ...prev.geoReferences,
-        ...geoData
-      }
-    }));
-  }, []);
+    const imovel = imoveis[propertyIndex];
+    const titulo = `Laudo - ${imovel.endereco}`;
 
-  /**
-   * Adiciona propriedade lindeira
-   */
+    try {
+      relatorioImovel(imovel, propertyIndex, format, dataGeral);
+    } catch (error) {
+      console.error('Erro ao gerar relatório de propriedade:', error);
+    }
+  }, [validateReportData, convertToGeneratorFormat]);
+
+  // Exporta relatório completo (todas as propriedades)
+  const exportCompleteReport = useCallback((format = 'pdf') => {
+    if (!validateReportData()) {
+      console.error('Dados insuficientes para gerar relatório completo');
+      return;
+    }
+
+    const { dataGeral, imoveis } = convertToGeneratorFormat();
+
+    if (imoveis.length === 0) {
+      console.error('Nenhuma propriedade para gerar relatório');
+      return;
+    }
+
+    const titulo = dataGeral.obra || 'Laudo de Vizinhança';
+
+    try {
+      relatorioIntegral(imoveis, format, dataGeral);
+    } catch (error) {
+      console.error('Erro ao gerar relatório completo:', error);
+    }
+  }, [validateReportData, convertToGeneratorFormat]);
+
+  // Métodos legados para compatibilidade
+  const generateReport = useCallback(() => {
+    exportCompleteReport('pdf');
+  }, [exportCompleteReport]);
+
+  const exportReport = useCallback((format = 'pdf') => {
+    exportCompleteReport(format);
+  }, [exportCompleteReport]);
+
   const addProperty = useCallback((property) => {
     setLaudoData(prev => ({
       ...prev,
-      properties: [...prev.properties, {
-        id: `prop_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        ...property
-      }]
+      properties: [...prev.properties, property],
     }));
   }, []);
 
-  /**
-   * Remove propriedade por ID
-   */
-  const removeProperty = useCallback((propertyId) => {
-    setLaudoData(prev => ({
-      ...prev,
-      properties: prev.properties.filter(p => p.id !== propertyId)
-    }));
-  }, []);
-
-  /**
-   * Atualiza propriedade
-   */
-  const updateProperty = useCallback((propertyId, updates) => {
-    setLaudoData(prev => ({
-      ...prev,
-      properties: prev.properties.map(p =>
-        p.id === propertyId ? { ...p, ...updates } : p
-      )
-    }));
-  }, []);
-
-  /**
-   * Salva assinatura
-   */
-  const updateSignature = useCallback((type, signatureData) => {
-    setLaudoData(prev => ({
-      ...prev,
-      signatures: {
-        ...prev.signatures,
-        [type]: signatureData
-      }
-    }));
-  }, []);
-
-  /**
-   * Atualiza declarações
-   */
-  const updateDeclarations = useCallback((declarations) => {
-    setLaudoData(prev => ({
-      ...prev,
-      declarations: {
-        ...prev.declarations,
-        ...declarations
-      }
-    }));
-  }, []);
-
-  /**
-   * Valida dados antes de gerar laudo
-   */
-  const validateReportData = useCallback(() => {
-    const errors = [];
-
-    if (!laudoData.reference) errors.push('Referência do laudo não informada');
-    if (!laudoData.inspectionData.date) errors.push('Data da vistoria não informada');
-    if (!laudoData.inspectionData.address) errors.push('Endereço não informado');
-    if (laudoData.photos.length === 0) errors.push('Nenhuma foto registrada');
-    if (laudoData.properties.length === 0) errors.push('Nenhuma propriedade lindeira informada');
-    if (!laudoData.signatures.declarant) errors.push('Assinatura do declarante não coletada');
-    if (!laudoData.declarations.warranty) errors.push('Termo de veracidade não aceito');
-
-    return {
-      isValid: errors.length === 0,
-      errors
-    };
-  }, [laudoData]);
-
-  /**
-   * Gera laudo em HTML
-   */
-  const generateReport = useCallback(async (format = 'html') => {
-    const validation = validateReportData();
-    if (!validation.isValid) {
-      setError(`Dados inválidos: ${validation.errors.join(', ')}`);
-      return null;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const endpoint = {
-        html: '/api/reports/generate',
-        pdf: '/api/reports/generate-pdf',
-        word: '/api/reports/generate-word'
-      }[format];
-
-      const response = await fetch(`http://localhost:3001${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(laudoData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      if (format === 'html') {
-        return await response.text();
-      } else {
-        return await response.blob();
-      }
-    } catch (err) {
-      setError(err.message);
-      console.error('Erro ao gerar laudo:', err);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [laudoData, validateReportData]);
-
-  /**
-   * Submete laudo ao backend
-   */
-  const submitReport = useCallback(async () => {
-    const validation = validateReportData();
-    if (!validation.isValid) {
-      setError(`Dados inválidos: ${validation.errors.join(', ')}`);
-      return null;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const reportData = {
-        ...laudoData,
-        timestamp: new Date().toISOString(),
-        reportId: `RPT-${Date.now()}`
-      };
-
-      const response = await fetch('http://localhost:3001/api/reports/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reportData)
-      });
-
-      if (!response.ok) {
-        throw new Error(`Erro ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-
-      // Limpar dados após submissão bem-sucedida
-      setLaudoData(prev => ({
-        ...prev,
-        timestamp: new Date().toISOString(),
-        reportId: result.reportId
-      }));
-
-      return result;
-    } catch (err) {
-      setError(err.message);
-      console.error('Erro ao submeter laudo:', err);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [laudoData, validateReportData]);
-
-  /**
-   * Limpa todos os dados
-   */
-  const clearAllData = useCallback(() => {
-    setLaudoData({
-      reference: '',
-      inspectionData: {
-        date: new Date().toISOString(),
-        time: '',
-        address: '',
-        complement: '',
-        municipality: '',
-        state: '',
-        cep: '',
-        declarantName: '',
-        declarantQuality: '',
-        cpfCnpj: '',
-        phone: '',
-        email: ''
-      },
-      photos: [],
-      geoReferences: { latitude: null, longitude: null, altitude: null },
-      properties: [],
-      signatures: { declarant: null, professional: null, witness: null },
-      declarations: { warranty: false, authenticity: false, responsibility: false },
-      timestamp: null,
-      reportId: ''
+  const updateProperty = useCallback((index, property) => {
+    setLaudoData(prev => {
+      const updated = [...prev.properties];
+      updated[index] = property;
+      return { ...prev, properties: updated };
     });
-    localStorage.removeItem('vickz_laudo_data');
   }, []);
 
-  /**
-   * Exporta laudo como arquivo
-   */
-  const exportReport = useCallback(async (format = 'pdf') => {
-    const blob = await generateReport(format);
-    if (!blob) return;
+  const removeProperty = useCallback((index) => {
+    setLaudoData(prev => ({
+      ...prev,
+      properties: prev.properties.filter((_, i) => i !== index),
+    }));
+  }, []);
 
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `laudo-${laudoData.reference || 'vistoria'}-${Date.now()}.${format}`;
-    document.body.appendChild(link);
-    link.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(link);
-  }, [laudoData.reference, generateReport]);
+  const updateInspectionData = useCallback((data) => {
+    setLaudoData(prev => ({
+      ...prev,
+      inspectionData: { ...prev.inspectionData, ...data },
+    }));
+  }, []);
+
+  const updateSignatures = useCallback((signatures) => {
+    setLaudoData(prev => ({
+      ...prev,
+      signatures: { ...prev.signatures, ...signatures },
+    }));
+  }, []);
 
   const value = {
-    // Estado
     laudoData,
-    loading,
-    error,
-    currentScreen,
-
-    // Setters
-    setCurrentScreen,
     setLaudoData,
-    setError,
-
-    // Métodos de atualização
-    updateInspectionData,
-    addPhoto,
-    removePhoto,
-    updatePhoto,
-    updateGeoReferences,
-    addProperty,
-    removeProperty,
-    updateProperty,
-    updateSignature,
-    updateDeclarations,
-
-    // Métodos de geração
+    reportValidation,
     validateReportData,
+    exportPropertyReport,
+    exportCompleteReport,
     generateReport,
-    submitReport,
-    clearAllData,
-    exportReport
+    exportReport,
+    addProperty,
+    updateProperty,
+    removeProperty,
+    updateInspectionData,
+    updateSignatures,
   };
 
   return (
@@ -398,13 +190,12 @@ export const AppProvider = ({ children }) => {
   );
 };
 
-/**
- * Hook para usar AppContext
- */
-export const useAppContext = () => {
+export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useAppContext deve ser usado dentro de AppProvider');
+    throw new Error('useApp deve ser usado dentro de um AppProvider');
   }
   return context;
 };
+
+export default AppContext;

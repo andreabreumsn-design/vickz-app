@@ -1,155 +1,181 @@
 import React, { useState } from 'react';
-import Header from './Header';
-import Stepper09 from './Stepper09';
-import ReportActionCard from './ReportActionCard';
-import PropertyReportCard from './PropertyReportCard';
-import NavigationBar from './NavigationBar';
+import { useApp } from '../AppContext';
 
-export default function ReportGenerationScreen() {
-  const [activeTab, setActiveTab] = useState('relatorio');
+const ReportGenerationScreen = () => {
+  const {
+    laudoData,
+    reportValidation,
+    validateReportData,
+    exportPropertyReport,
+    exportCompleteReport,
+  } = useApp();
 
-  // Mock data - properties/neighbors
-  const properties = [
-    {
-      id: 1,
-      index: 1,
-      name: 'Imóvel Lindeiro 1',
-      owner: 'Silva Imóveis LTDA',
-      address: 'Rua das Flores, 123 - São Paulo, SP',
-      status: 'Pendente'
-    },
-    {
-      id: 2,
-      index: 2,
-      name: 'Imóvel Lindeiro 2',
-      owner: 'José Pereira',
-      address: 'Avenida Paulista, 456 - São Paulo, SP',
-      status: 'Pendente'
-    },
-    {
-      id: 3,
-      index: 3,
-      name: 'Imóvel Lindeiro 3',
-      owner: 'Condomínio Residencial Park',
-      address: 'Rua Principal, 789 - São Paulo, SP',
-      status: 'Pendente'
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleValidation = () => {
+    const valid = validateReportData();
+    if (!valid) {
+      setError('Dados insuficientes. Verifique: propriedades, fotos, endereço e assinatura.');
+      return false;
     }
-  ];
-
-  // Global actions
-  const handlePdfAll = () => {
-    console.log('Generating PDF for all properties');
-    alert('✓ PDF integral (todos) gerado com sucesso!\n\nArquivo: relatorio-completo.pdf');
+    setError(null);
+    return true;
   };
 
-  const handleWordAll = () => {
-    console.log('Generating Word document for all properties');
-    alert('✓ Word integral (todos) gerado com sucesso!\n\nArquivo: relatorio-completo.docx');
-  };
-
-  const handleSubmitBackend = async () => {
-    console.log('Submitting to backend: http://localhost:3001');
+  const handlePdfAll = async () => {
+    if (!handleValidation()) return;
+    
+    setLoading(true);
     try {
-      const response = await fetch('http://localhost:3001/api/reports/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reference: 'VICKZ-2024-001-SP',
-          properties: properties,
-          timestamp: new Date().toISOString()
-        })
-      });
-
-      if (response.ok) {
-        alert('✓ Relatório enviado ao backend com sucesso!\n\nURL: http://localhost:3001/api/reports/view');
-        console.log('Backend response:', await response.json());
-      } else {
-        alert('⚠️ Erro ao enviar para o backend.\n\nVerifique se http://localhost:3001 está acessível.');
-      }
-    } catch (error) {
-      console.error('Backend error:', error);
-      alert('⚠️ Erro ao conectar ao backend.\n\nVerifique se http://localhost:3001 está acessível.');
+      exportCompleteReport('pdf');
+    } catch (err) {
+      setError(`Erro ao gerar PDF: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Individual property actions
-  const handlePropertyPdf = (propertyId, propertyName) => {
-    console.log(`Generating PDF for property ${propertyId}`);
-    alert(`✓ PDF de "${propertyName}" gerado com sucesso!\n\nArquivo: relatorio-imovel-${propertyId}.pdf`);
+  const handleWordAll = async () => {
+    if (!handleValidation()) return;
+    
+    setLoading(true);
+    try {
+      exportCompleteReport('word');
+    } catch (err) {
+      setError(`Erro ao gerar Word: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePropertyWord = (propertyId, propertyName) => {
-    console.log(`Generating Word for property ${propertyId}`);
-    alert(`✓ Word de "${propertyName}" gerado com sucesso!\n\nArquivo: relatorio-imovel-${propertyId}.docx`);
+  const handlePropertyPdf = (index) => async () => {
+    if (!handleValidation()) return;
+    
+    setLoading(true);
+    try {
+      exportPropertyReport(index, 'pdf');
+    } catch (err) {
+      setError(`Erro ao gerar PDF do imóvel: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handlePropertyReopen = (propertyId, propertyName) => {
-    console.log(`Reopening inspection for property ${propertyId}`);
-    alert(`⚠️ Reabrindo vistoria de "${propertyName}"...\n\nVoltando para Tela 07 (Registro Fotográfico)`);
-  };
-
-  const handleNavigate = (screen) => {
-    setActiveTab(screen);
-    console.log(`Navigating to: ${screen}`);
+  const handlePropertyWord = (index) => async () => {
+    if (!handleValidation()) return;
+    
+    setLoading(true);
+    try {
+      exportPropertyReport(index, 'word');
+    } catch (err) {
+      setError(`Erro ao gerar Word do imóvel: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen pb-24">
-      {/* Header */}
-      <Header title="Gerar Relatórios" />
-
-      {/* Stepper */}
-      <Stepper09 />
-
-      {/* Title */}
-      <div className="max-w-[430px] mx-auto px-4 py-4">
-        <h2 className="text-2xl font-bold text-[#001F5B] mb-2">Gerar relatórios</h2>
-        <p className="text-sm text-[#64748b]">
-          PDF (imprimir/salvar) ou Word (.doc) — integral ou por imóvel.
-        </p>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-[430px] mx-auto space-y-2 py-2">
-        {/* Global Actions Card */}
-        <ReportActionCard
-          onPdfAll={handlePdfAll}
-          onWordAll={handleWordAll}
-          onSubmitBackend={handleSubmitBackend}
-        />
-
-        {/* Properties Section Title */}
-        <div className="mx-4 mt-6 mb-3">
-          <h3 className="text-sm font-bold text-[#001F5B]">Relatórios por Imóvel ({properties.length})</h3>
-          <p className="text-xs text-[#64748b] mt-1">Gere ou reabra a vistoria de cada imóvel lindeiro</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Módulo 4: Gerar Relatórios</h1>
+          <p className="text-gray-600">Exportar laudos em PDF ou Word</p>
         </div>
 
-        {/* Property Cards */}
-        {properties.map((property) => (
-          <PropertyReportCard
-            key={property.id}
-            propertyIndex={property.index}
-            propertyName={property.name}
-            ownerName={property.owner}
-            address={property.address}
-            status={property.status}
-            onPdfDownload={() => handlePropertyPdf(property.id, property.name)}
-            onWordDownload={() => handlePropertyWord(property.id, property.name)}
-            onReopen={() => handlePropertyReopen(property.id, property.name)}
-          />
-        ))}
+        {/* Validation Checklist */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-l-4 border-blue-500">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Status da Validação</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className={`flex items-center space-x-3 p-3 rounded ${reportValidation.hasProperties ? 'bg-green-50' : 'bg-red-50'}`}>
+              <span className={`text-2xl ${reportValidation.hasProperties ? '✅' : '❌'}`}></span>
+              <span className="text-gray-700">Propriedades: {laudoData.properties?.length || 0}</span>
+            </div>
+            <div className={`flex items-center space-x-3 p-3 rounded ${reportValidation.hasPhotos ? 'bg-green-50' : 'bg-red-50'}`}>
+              <span className={`text-2xl ${reportValidation.hasPhotos ? '✅' : '❌'}`}></span>
+              <span className="text-gray-700">Fotos: {laudoData.properties?.reduce((sum, p) => sum + (p.photos?.length || 0), 0) || 0}</span>
+            </div>
+            <div className={`flex items-center space-x-3 p-3 rounded ${reportValidation.hasAddress ? 'bg-green-50' : 'bg-red-50'}`}>
+              <span className={`text-2xl ${reportValidation.hasAddress ? '✅' : '❌'}`}></span>
+              <span className="text-gray-700">Endereço informado</span>
+            </div>
+            <div className={`flex items-center space-x-3 p-3 rounded ${reportValidation.hasSignature ? 'bg-green-50' : 'bg-red-50'}`}>
+              <span className={`text-2xl ${reportValidation.hasSignature ? '✅' : '❌'}`}></span>
+              <span className="text-gray-700">Assinatura do técnico</span>
+            </div>
+          </div>
+        </div>
 
-        {/* Completion Message */}
-        <div className="mx-4 my-6 px-4 py-4 bg-[#ECFDF5] border border-[#A7F3D0] rounded-lg">
-          <p className="text-sm font-semibold text-[#065F46] mb-2">✓ Vistoria Completa</p>
-          <p className="text-xs text-[#047857] leading-relaxed">
-            Todas as etapas foram completadas. Você pode gerar os relatórios em PDF ou Word e enviá-los ao backend para armazenamento e consulta posterior.
-          </p>
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-8 text-red-800">
+            ⚠️ {error}
+          </div>
+        )}
+
+        {/* Complete Report Section */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-l-4 border-orange-500">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">📄 Relatório Integral (Todos os Imóveis)</h2>
+          <p className="text-gray-600 mb-6">Gera um único laudo contendo todas as propriedades vistoriadas</p>
+          <div className="flex gap-4">
+            <button
+              onClick={handlePdfAll}
+              disabled={loading}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+            >
+              {loading ? '⏳ Gerando PDF...' : '📕 PDF Integral'}
+            </button>
+            <button
+              onClick={handleWordAll}
+              disabled={loading}
+              className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+            >
+              {loading ? '⏳ Gerando Word...' : '📗 Word Integral'}
+            </button>
+          </div>
+        </div>
+
+        {/* Individual Properties Section */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">🏠 Relatórios por Imóvel</h2>
+          <p className="text-gray-600 mb-6">Gera um laudo separado para cada propriedade</p>
+
+          {laudoData.properties && laudoData.properties.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {laudoData.properties.map((property, index) => (
+                <div key={index} className="border rounded-lg p-4 bg-gray-50 hover:bg-gray-100 transition">
+                  <h3 className="font-semibold text-gray-800 mb-3">Imóvel {index + 1}</h3>
+                  <p className="text-sm text-gray-600 mb-4">{property.address || `Propriedade ${index + 1}`}</p>
+                  <p className="text-xs text-gray-500 mb-4">📸 {property.photos?.length || 0} fotos</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handlePropertyPdf(index)}
+                      disabled={loading}
+                      className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white text-sm font-medium py-2 px-3 rounded transition duration-200"
+                    >
+                      PDF
+                    </button>
+                    <button
+                      onClick={handlePropertyWord(index)}
+                      disabled={loading}
+                      className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white text-sm font-medium py-2 px-3 rounded transition duration-200"
+                    >
+                      Word
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-100 rounded-lg p-8 text-center text-gray-500">
+              <p>Nenhuma propriedade registrada. Complete os módulos anteriores primeiro.</p>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Navigation Bar */}
-      <NavigationBar activeTab={activeTab} onNavigate={handleNavigate} />
     </div>
   );
-}
+};
+
+export default ReportGenerationScreen;
