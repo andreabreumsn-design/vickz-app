@@ -1,0 +1,32 @@
+name: ci
+on:
+  push:
+    branches: [preview]
+  pull_request:
+    branches: [preview, main]
+  workflow_dispatch:
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Instalar sem os binários do Windows do repo
+        run: |
+          rm -rf node_modules
+          npm install
+      - run: npx vitest run
+      - run: npx vite build
+  html-producao:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Produção ainda tem o gerador HTML
+        run: |
+          curl -fsSL "https://vickz.com.br/" -o prod.html
+          grep -q "abrirRelatorio" prod.html
+          grep -q "Gerar relatórios" prod.html
+          grep -q "relatorioImovel" prod.html
+          echo "ok: laudo HTML no ar"
