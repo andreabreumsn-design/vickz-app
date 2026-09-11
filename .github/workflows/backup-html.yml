@@ -1,0 +1,31 @@
+name: backup-html-producao
+on:
+  schedule:
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: html-backup
+      - name: Baixar HTML de vickz.com.br
+        run: |
+          mkdir -p backup/producao
+          curl -fsSL "https://vickz.com.br/" -o backup/producao/index-latest.html
+          DATE=$(date -u +%Y-%m-%d)
+          cp backup/producao/index-latest.html "backup/producao/index-vickz.com.br-${DATE}.html"
+      - name: Commit se mudou
+        run: |
+          git config user.name "vickz-html-backup"
+          git config user.email "backup@users.noreply.github.com"
+          git add backup/producao
+          if git diff --cached --quiet; then
+            echo "Nada mudou"
+          else
+            git commit -m "backup automatico HTML $(date -u +%Y-%m-%d)"
+            git push origin html-backup
+          fi
