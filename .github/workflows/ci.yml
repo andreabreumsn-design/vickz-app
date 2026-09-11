@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -43,27 +45,9 @@ jobs:
               f"| Funções | {t['functions']['covered']} | {t['functions']['total']} | {pct('functions')} |",
               f"| Branches | {t['branches']['covered']} | {t['branches']['total']} | {pct('branches')} |",
               "",
-              "Thresholds: `NavigationBar.jsx` 100% · chrome ≥ 14%.",
-              "",
-              "### Arquivos com cobertura > 0",
-              "",
-              "| Arquivo | Linhas % |",
-              "|---|---:|",
           ]
-          rows = []
-          for path, stats in d.items():
-              if path == "total":
-                  continue
-              lp = stats.get("lines", {}).get("pct", 0)
-              if lp > 0:
-                  rows.append((lp, path.split("/src/")[-1] if "/src/" in path else path))
-          rows.sort(reverse=True)
-          for lp, name in rows:
-              lines.append(f"| `{name}` | {lp} |")
-          if not rows:
-              lines.append("| — | 0 |")
           open(out, "a").write("\n".join(lines) + "\n")
-          print(f"::notice::Cobertura linhas {pct('lines')}% · funções {pct('functions')}%")
+          print(f"::notice::Cobertura linhas {pct('lines')}%")
           PY
       - name: Publicar HTML de cobertura
         if: always()
@@ -72,6 +56,12 @@ jobs:
           name: coverage
           path: coverage
           if-no-files-found: ignore
+      - name: SonarQube / SonarCloud
+        if: ${{ secrets.SONAR_TOKEN != '' }}
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
       - run: npx vite build
   html-producao:
     runs-on: ubuntu-latest
