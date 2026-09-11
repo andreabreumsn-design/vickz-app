@@ -20,14 +20,19 @@ export default mergeConfig(
           'src/**/*.test.*',
           'src/test/**'
         ],
-        // perFile: true + piso global falharia os 40 JSX a 0%.
-        // Só arquivos listados abaixo travam o CI.
+        // Glob = pasta lógica (src/ é plano). Sem perFile:true —
+        // o % é a SOMA dos arquivos do glob. Grupos a 0% não entram.
         thresholds: {
-          'src/NavigationBar.jsx': {
+          '**/NavigationBar.jsx': {
             lines: 100,
             statements: 100,
             functions: 100,
             branches: 80
+          },
+          // chrome: Nav 28 + Header/Banner/KPIs/etc. a 0 = ~15%
+          'src/{NavigationBar,Header,Banner,KPICards,QuickActions,SystemStatus,InformativeCard,EngineerCard}.jsx': {
+            lines: 14,
+            statements: 14
           }
         }
       }
