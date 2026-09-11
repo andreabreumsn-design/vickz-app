@@ -12,7 +12,7 @@ export default mergeConfig(
       css: false,
       coverage: {
         provider: 'v8',
-        reporter: ['text', 'json-summary', 'html'],
+        reporter: ['text', 'json-summary', 'html', 'lcov'],
         reportsDirectory: './coverage',
         include: ['src/**/*.{js,jsx}'],
         exclude: [
@@ -20,8 +20,6 @@ export default mergeConfig(
           'src/**/*.test.*',
           'src/test/**'
         ],
-        // Glob = pasta lógica (src/ é plano). Sem perFile:true —
-        // o % é a SOMA dos arquivos do glob. Grupos a 0% não entram.
         thresholds: {
           '**/NavigationBar.jsx': {
             lines: 100,
@@ -29,7 +27,6 @@ export default mergeConfig(
             functions: 100,
             branches: 80
           },
-          // chrome: Nav 28 + Header/Banner/KPIs/etc. a 0 = ~15%
           'src/{NavigationBar,Header,Banner,KPICards,QuickActions,SystemStatus,InformativeCard,EngineerCard}.jsx': {
             lines: 14,
             statements: 14
