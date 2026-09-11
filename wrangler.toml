@@ -1,0 +1,4 @@
+# Cloudflare Pages — SOMENTE prévia. Não apontar vickz.com.br para este projeto.
+name = "vickz-preview"
+compatibility_date = "2026-09-10"
+pages_build_output_dir = "dist"
